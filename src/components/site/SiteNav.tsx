@@ -46,7 +46,7 @@ export function SiteNav() {
           </Link>
 
           <button
-            className="inline-flex items-center gap-3 text-ivory group"
+            className="inline-flex items-center gap-3 text-ivory group cursor-pointer"
             onClick={() => setOpen((v) => !v)}
             aria-label={open ? "Close menu" : "Open menu"}
           >
