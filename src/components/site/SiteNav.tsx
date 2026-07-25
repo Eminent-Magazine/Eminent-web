@@ -79,7 +79,7 @@ export function SiteNav() {
                 <span className="text-[10px] text-gold/60 tabular-nums tracking-widest">
                   0{i + 1}
                 </span>
-                <span className="font-display text-3xl sm:text-5xl md:text-7xl lg:text-8xl leading-[0.9] tracking-tight">
+                <span className="font-display text-3xl sm:text-4xl md:text-6xl lg:text-7xl leading-[0.9] tracking-tight">
                   {item.label}
                 </span>
               </Link>
