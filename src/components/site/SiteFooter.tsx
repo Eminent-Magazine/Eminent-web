@@ -7,10 +7,13 @@ export function SiteFooter() {
       <div className="container-editorial pt-24 pb-10">
         <div className="grid gap-16 md:grid-cols-12">
           <div className="md:col-span-5">
-            <h3 className="font-display text-5xl md:text-6xl leading-[0.95] text-ivory">
-              Eminent<br />
-              <span className="italic text-gold">Magazine.</span>
-            </h3>
+            <div className="inline-flex">
+              <img src={"/favicon-32.png"} alt="Eminent Logo" className="w-6 h-6 object-cover rounded-full" loading="lazy" />
+              <h3 className="font-display text-5xl md:text-6xl leading-[0.95] text-ivory">
+                Eminent<br />
+                <span className="italic text-gold">Magazine.</span>
+              </h3>
+            </div>
             <p className="mt-6 text-sm text-ivory/60 max-w-sm leading-relaxed">
               A multi-category publication covering fashion, lifestyle,
               entertainment, photography, modelling, media and PR.

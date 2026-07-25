@@ -9,79 +9,35 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as VoteRouteImport } from './routes/vote'
-import { Route as StoreRouteImport } from './routes/store'
-import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as ServicesRouteImport } from './routes/services'
-import { Route as RegisterRouteImport } from './routes/register'
-import { Route as PageantryRouteImport } from './routes/pageantry'
-import { Route as ModelingRouteImport } from './routes/modeling'
-import { Route as MagazineRouteImport } from './routes/magazine'
-import { Route as ContactRouteImport } from './routes/contact'
-import { Route as AdminRouteImport } from './routes/admin'
-import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AboutRouteImport } from './routes/about'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as MagazineRouteImport } from './routes/magazine'
+import { Route as ModelingRouteImport } from './routes/modeling'
+import { Route as PageantryRouteImport } from './routes/pageantry'
+import { Route as RegisterRouteImport } from './routes/register'
+import { Route as ServicesRouteImport } from './routes/services'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as StoreRouteImport } from './routes/store'
+import { Route as TermsRouteImport } from './routes/terms'
+import { Route as VoteRouteImport } from './routes/vote'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
-import { Route as VoteCallbackRouteImport } from './routes/vote.callback'
-import { Route as VoteIdRouteImport } from './routes/vote.$id'
-import { Route as StoriesSlugRouteImport } from './routes/stories.$slug'
-import { Route as RegisterCallbackRouteImport } from './routes/register.callback'
-import { Route as CategorySlugRouteImport } from './routes/category.$slug'
-import { Route as AdminUsersRouteImport } from './routes/admin.users'
-import { Route as AdminTransactionsRouteImport } from './routes/admin.transactions'
-import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
-import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminContestantsRouteImport } from './routes/admin.contestants'
+import { Route as AdminLoginRouteImport } from './routes/admin.login'
+import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
+import { Route as AdminTransactionsRouteImport } from './routes/admin.transactions'
+import { Route as AdminUsersRouteImport } from './routes/admin.users'
+import { Route as CategorySlugRouteImport } from './routes/category.$slug'
+import { Route as RegisterCallbackRouteImport } from './routes/register.callback'
+import { Route as StoriesSlugRouteImport } from './routes/stories.$slug'
+import { Route as VoteIdRouteImport } from './routes/vote.$id'
+import { Route as VoteCallbackRouteImport } from './routes/vote.callback'
 import { Route as ApiPublicPageantSplatRouteImport } from './routes/api/public/pageant.$'
 
-const VoteRoute = VoteRouteImport.update({
-  id: '/vote',
-  path: '/vote',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const StoreRoute = StoreRouteImport.update({
-  id: '/store',
-  path: '/store',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
-  id: '/sitemap.xml',
-  path: '/sitemap.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ServicesRoute = ServicesRouteImport.update({
-  id: '/services',
-  path: '/services',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RegisterRoute = RegisterRouteImport.update({
-  id: '/register',
-  path: '/register',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PageantryRoute = PageantryRouteImport.update({
-  id: '/pageantry',
-  path: '/pageantry',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ModelingRoute = ModelingRouteImport.update({
-  id: '/modeling',
-  path: '/modeling',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MagazineRoute = MagazineRouteImport.update({
-  id: '/magazine',
-  path: '/magazine',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ContactRoute = ContactRouteImport.update({
-  id: '/contact',
-  path: '/contact',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminRoute = AdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -89,9 +45,59 @@ const AboutRoute = AboutRouteImport.update({
   path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MagazineRoute = MagazineRouteImport.update({
+  id: '/magazine',
+  path: '/magazine',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ModelingRoute = ModelingRouteImport.update({
+  id: '/modeling',
+  path: '/modeling',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PageantryRoute = PageantryRouteImport.update({
+  id: '/pageantry',
+  path: '/pageantry',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RegisterRoute = RegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ServicesRoute = ServicesRouteImport.update({
+  id: '/services',
+  path: '/services',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StoreRoute = StoreRouteImport.update({
+  id: '/store',
+  path: '/store',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VoteRoute = VoteRouteImport.update({
+  id: '/vote',
+  path: '/vote',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
@@ -99,44 +105,9 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminRoute,
 } as any)
-const VoteCallbackRoute = VoteCallbackRouteImport.update({
-  id: '/callback',
-  path: '/callback',
-  getParentRoute: () => VoteRoute,
-} as any)
-const VoteIdRoute = VoteIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => VoteRoute,
-} as any)
-const StoriesSlugRoute = StoriesSlugRouteImport.update({
-  id: '/stories/$slug',
-  path: '/stories/$slug',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RegisterCallbackRoute = RegisterCallbackRouteImport.update({
-  id: '/callback',
-  path: '/callback',
-  getParentRoute: () => RegisterRoute,
-} as any)
-const CategorySlugRoute = CategorySlugRouteImport.update({
-  id: '/category/$slug',
-  path: '/category/$slug',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminUsersRoute = AdminUsersRouteImport.update({
-  id: '/users',
-  path: '/users',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminTransactionsRoute = AdminTransactionsRouteImport.update({
-  id: '/transactions',
-  path: '/transactions',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminSettingsRoute = AdminSettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
+const AdminContestantsRoute = AdminContestantsRouteImport.update({
+  id: '/contestants',
+  path: '/contestants',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminLoginRoute = AdminLoginRouteImport.update({
@@ -144,10 +115,45 @@ const AdminLoginRoute = AdminLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminContestantsRoute = AdminContestantsRouteImport.update({
-  id: '/contestants',
-  path: '/contestants',
+const AdminSettingsRoute = AdminSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
   getParentRoute: () => AdminRoute,
+} as any)
+const AdminTransactionsRoute = AdminTransactionsRouteImport.update({
+  id: '/transactions',
+  path: '/transactions',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminUsersRoute = AdminUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AdminRoute,
+} as any)
+const CategorySlugRoute = CategorySlugRouteImport.update({
+  id: '/category/$slug',
+  path: '/category/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RegisterCallbackRoute = RegisterCallbackRouteImport.update({
+  id: '/callback',
+  path: '/callback',
+  getParentRoute: () => RegisterRoute,
+} as any)
+const StoriesSlugRoute = StoriesSlugRouteImport.update({
+  id: '/stories/$slug',
+  path: '/stories/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VoteIdRoute = VoteIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => VoteRoute,
+} as any)
+const VoteCallbackRoute = VoteCallbackRouteImport.update({
+  id: '/callback',
+  path: '/callback',
+  getParentRoute: () => VoteRoute,
 } as any)
 const ApiPublicPageantSplatRoute = ApiPublicPageantSplatRouteImport.update({
   id: '/api/public/pageant/$',
@@ -167,6 +173,7 @@ export interface FileRoutesByFullPath {
   '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/store': typeof StoreRoute
+  '/terms': typeof TermsRoute
   '/vote': typeof VoteRouteWithChildren
   '/admin/contestants': typeof AdminContestantsRoute
   '/admin/login': typeof AdminLoginRoute
@@ -192,6 +199,7 @@ export interface FileRoutesByTo {
   '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/store': typeof StoreRoute
+  '/terms': typeof TermsRoute
   '/vote': typeof VoteRouteWithChildren
   '/admin/contestants': typeof AdminContestantsRoute
   '/admin/login': typeof AdminLoginRoute
@@ -219,6 +227,7 @@ export interface FileRoutesById {
   '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/store': typeof StoreRoute
+  '/terms': typeof TermsRoute
   '/vote': typeof VoteRouteWithChildren
   '/admin/contestants': typeof AdminContestantsRoute
   '/admin/login': typeof AdminLoginRoute
@@ -247,6 +256,7 @@ export interface FileRouteTypes {
     | '/services'
     | '/sitemap.xml'
     | '/store'
+    | '/terms'
     | '/vote'
     | '/admin/contestants'
     | '/admin/login'
@@ -272,6 +282,7 @@ export interface FileRouteTypes {
     | '/services'
     | '/sitemap.xml'
     | '/store'
+    | '/terms'
     | '/vote'
     | '/admin/contestants'
     | '/admin/login'
@@ -298,6 +309,7 @@ export interface FileRouteTypes {
     | '/services'
     | '/sitemap.xml'
     | '/store'
+    | '/terms'
     | '/vote'
     | '/admin/contestants'
     | '/admin/login'
@@ -325,6 +337,7 @@ export interface RootRouteChildren {
   ServicesRoute: typeof ServicesRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   StoreRoute: typeof StoreRoute
+  TermsRoute: typeof TermsRoute
   VoteRoute: typeof VoteRouteWithChildren
   CategorySlugRoute: typeof CategorySlugRoute
   StoriesSlugRoute: typeof StoriesSlugRoute
@@ -333,74 +346,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/vote': {
-      id: '/vote'
-      path: '/vote'
-      fullPath: '/vote'
-      preLoaderRoute: typeof VoteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/store': {
-      id: '/store'
-      path: '/store'
-      fullPath: '/store'
-      preLoaderRoute: typeof StoreRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/services': {
-      id: '/services'
-      path: '/services'
-      fullPath: '/services'
-      preLoaderRoute: typeof ServicesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/register': {
-      id: '/register'
-      path: '/register'
-      fullPath: '/register'
-      preLoaderRoute: typeof RegisterRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/pageantry': {
-      id: '/pageantry'
-      path: '/pageantry'
-      fullPath: '/pageantry'
-      preLoaderRoute: typeof PageantryRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/modeling': {
-      id: '/modeling'
-      path: '/modeling'
-      fullPath: '/modeling'
-      preLoaderRoute: typeof ModelingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/magazine': {
-      id: '/magazine'
-      path: '/magazine'
-      fullPath: '/magazine'
-      preLoaderRoute: typeof MagazineRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/contact': {
-      id: '/contact'
-      path: '/contact'
-      fullPath: '/contact'
-      preLoaderRoute: typeof ContactRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin': {
-      id: '/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AdminRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -410,11 +360,81 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/magazine': {
+      id: '/magazine'
+      path: '/magazine'
+      fullPath: '/magazine'
+      preLoaderRoute: typeof MagazineRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/modeling': {
+      id: '/modeling'
+      path: '/modeling'
+      fullPath: '/modeling'
+      preLoaderRoute: typeof ModelingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pageantry': {
+      id: '/pageantry'
+      path: '/pageantry'
+      fullPath: '/pageantry'
+      preLoaderRoute: typeof PageantryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/services': {
+      id: '/services'
+      path: '/services'
+      fullPath: '/services'
+      preLoaderRoute: typeof ServicesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/store': {
+      id: '/store'
+      path: '/store'
+      fullPath: '/store'
+      preLoaderRoute: typeof StoreRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vote': {
+      id: '/vote'
+      path: '/vote'
+      fullPath: '/vote'
+      preLoaderRoute: typeof VoteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/': {
@@ -424,60 +444,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/vote/callback': {
-      id: '/vote/callback'
-      path: '/callback'
-      fullPath: '/vote/callback'
-      preLoaderRoute: typeof VoteCallbackRouteImport
-      parentRoute: typeof VoteRoute
-    }
-    '/vote/$id': {
-      id: '/vote/$id'
-      path: '/$id'
-      fullPath: '/vote/$id'
-      preLoaderRoute: typeof VoteIdRouteImport
-      parentRoute: typeof VoteRoute
-    }
-    '/stories/$slug': {
-      id: '/stories/$slug'
-      path: '/stories/$slug'
-      fullPath: '/stories/$slug'
-      preLoaderRoute: typeof StoriesSlugRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/register/callback': {
-      id: '/register/callback'
-      path: '/callback'
-      fullPath: '/register/callback'
-      preLoaderRoute: typeof RegisterCallbackRouteImport
-      parentRoute: typeof RegisterRoute
-    }
-    '/category/$slug': {
-      id: '/category/$slug'
-      path: '/category/$slug'
-      fullPath: '/category/$slug'
-      preLoaderRoute: typeof CategorySlugRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/users': {
-      id: '/admin/users'
-      path: '/users'
-      fullPath: '/admin/users'
-      preLoaderRoute: typeof AdminUsersRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/transactions': {
-      id: '/admin/transactions'
-      path: '/transactions'
-      fullPath: '/admin/transactions'
-      preLoaderRoute: typeof AdminTransactionsRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/settings': {
-      id: '/admin/settings'
-      path: '/settings'
-      fullPath: '/admin/settings'
-      preLoaderRoute: typeof AdminSettingsRouteImport
+    '/admin/contestants': {
+      id: '/admin/contestants'
+      path: '/contestants'
+      fullPath: '/admin/contestants'
+      preLoaderRoute: typeof AdminContestantsRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/login': {
@@ -487,12 +458,61 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLoginRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/contestants': {
-      id: '/admin/contestants'
-      path: '/contestants'
-      fullPath: '/admin/contestants'
-      preLoaderRoute: typeof AdminContestantsRouteImport
+    '/admin/settings': {
+      id: '/admin/settings'
+      path: '/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AdminSettingsRouteImport
       parentRoute: typeof AdminRoute
+    }
+    '/admin/transactions': {
+      id: '/admin/transactions'
+      path: '/transactions'
+      fullPath: '/admin/transactions'
+      preLoaderRoute: typeof AdminTransactionsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/users': {
+      id: '/admin/users'
+      path: '/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AdminUsersRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/category/$slug': {
+      id: '/category/$slug'
+      path: '/category/$slug'
+      fullPath: '/category/$slug'
+      preLoaderRoute: typeof CategorySlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/register/callback': {
+      id: '/register/callback'
+      path: '/callback'
+      fullPath: '/register/callback'
+      preLoaderRoute: typeof RegisterCallbackRouteImport
+      parentRoute: typeof RegisterRoute
+    }
+    '/stories/$slug': {
+      id: '/stories/$slug'
+      path: '/stories/$slug'
+      fullPath: '/stories/$slug'
+      preLoaderRoute: typeof StoriesSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vote/$id': {
+      id: '/vote/$id'
+      path: '/$id'
+      fullPath: '/vote/$id'
+      preLoaderRoute: typeof VoteIdRouteImport
+      parentRoute: typeof VoteRoute
+    }
+    '/vote/callback': {
+      id: '/vote/callback'
+      path: '/callback'
+      fullPath: '/vote/callback'
+      preLoaderRoute: typeof VoteCallbackRouteImport
+      parentRoute: typeof VoteRoute
     }
     '/api/public/pageant/$': {
       id: '/api/public/pageant/$'
@@ -560,6 +580,7 @@ const rootRouteChildren: RootRouteChildren = {
   ServicesRoute: ServicesRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   StoreRoute: StoreRoute,
+  TermsRoute: TermsRoute,
   VoteRoute: VoteRouteWithChildren,
   CategorySlugRoute: CategorySlugRoute,
   StoriesSlugRoute: StoriesSlugRoute,
@@ -568,3 +589,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

@@ -19,7 +19,9 @@ export const Route = createFileRoute("/register")({
 
 function RegisterPage() {
   const settingsQ = useQuery({ queryKey: ["reg-settings"], queryFn: Public.registrationSettings });
-  const s = settingsQ.data?.data;
+  const s = settingsQ.data;
+
+  console.log("public registrations settings:", s)
 
   if (settingsQ.isLoading) {
     return <SiteLayout><div className="py-32 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-muted-foreground" /></div></SiteLayout>;
@@ -76,7 +78,7 @@ function PayFirstForm({ fee }: { fee: number }) {
         <span className="font-display text-2xl">₦{fee.toLocaleString()}</span>
       </div>
       {err && <p className="text-xs text-destructive">{err}</p>}
-      <button disabled={loading} className="btn-primary w-full">{loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Pay with Paystack"}</button>
+      <button disabled={loading} className="btn-primary-ivory w-full">{loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Pay with Paystack"}</button>
       <p className="text-[11px] text-muted-foreground text-center">You'll return here to complete your contestant profile after payment.</p>
     </form>
   );
@@ -114,13 +116,13 @@ function ProfileForm({ transactionReference }: { transactionReference?: string }
       <div className="bg-card border border-border p-10 text-center">
         <h2 className="font-display text-3xl">Application submitted</h2>
         <p className="mt-3 text-sm text-muted-foreground">We'll review and get back to you within 3 business days.</p>
-        <Link to="/" className="btn-primary mt-6 inline-flex">Back to home</Link>
+        <Link to="/" className="btn-primary-ivory mt-6 inline-flex">Back to home</Link>
       </div>
     );
   }
 
   return (
-    <form onSubmit={submit} className="bg-card border border-border p-8 space-y-4">
+    <form onSubmit={submit} className="bg-card border border-border p-8 space-y-4 mt-10">
       <p className="eyebrow">Contestant profile</p>
       <div className="grid grid-cols-2 gap-3">
         <input required placeholder="Full name" className="h-12 px-4 bg-background border border-input text-sm rounded-sm" value={form.name} onChange={(e) => set("name", e.target.value)} />
@@ -135,7 +137,7 @@ function ProfileForm({ transactionReference }: { transactionReference?: string }
         <input placeholder="TikTok handle" className="h-12 px-4 bg-background border border-input text-sm rounded-sm" value={form.tiktok} onChange={(e) => set("tiktok", e.target.value)} />
       </div>
       {err && <p className="text-xs text-destructive">{err}</p>}
-      <button disabled={loading} className="btn-primary w-full">{loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Submit application"}</button>
+      <button disabled={loading} className="btn-primary-ivory w-full">{loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Submit application"}</button>
     </form>
   );
 }

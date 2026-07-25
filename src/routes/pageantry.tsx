@@ -32,7 +32,7 @@ function PageantryPage() {
           <h1 className="mt-4 font-display text-5xl md:text-7xl lg:text-8xl leading-[1.02]">The crown. The stage. <em className="text-gold">The story.</em></h1>
           <p className="mt-6 max-w-xl mx-auto text-ivory/80">Six seasons. 140+ contestants. One growing legacy of grace, service and enterprise.</p>
           <div className="mt-8 flex flex-wrap gap-3 justify-center">
-            <Link to="/vote" className="btn-primary">Vote 2026</Link>
+            <Link to="/vote" className="btn-primary-ivory">Vote 2026</Link>
             <Link to="/modeling" className="btn-outline-gold !text-ivory !border-ivory/40 hover:!text-ink">Apply for Season 7</Link>
           </div>
         </div>
@@ -75,7 +75,7 @@ function PageantryPage() {
             campaigns, magazine features, and mentorship on turning visibility into
             a career.
           </p>
-          <Link to="/vote" className="btn-primary mt-8">Support this season</Link>
+          <Link to="/vote" className="btn-primary-ivory mt-8">Support this season</Link>
         </div>
       </section>
     </SiteLayout>

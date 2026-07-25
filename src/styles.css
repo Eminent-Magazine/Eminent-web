@@ -177,6 +177,7 @@
   border-radius: 9999px;
   border: 1px solid var(--color-primary);
   transition: transform 0.4s ease, background 0.4s ease, box-shadow 0.4s ease;
+  cursor: pointer;
 
   &:hover {
     background: #e0303f;
@@ -201,9 +202,58 @@
   border: 1px solid rgba(245, 245, 240, 0.25);
   border-radius: 9999px;
   transition: background 0.4s ease, border-color 0.4s ease;
+  cursor: pointer;
 
   &:hover {
     background: rgba(245, 245, 240, 0.08);
+    border-color: var(--color-gold);
+    color: var(--color-gold);
+  }
+}
+
+@utility btn-primary-ivory {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.70rem 2.25rem;
+  background: transparent;
+  color: var(--color-ivory);
+  font-weight: 600;
+  font-size: 0.72rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  border: 1px solid rgba(245, 245, 240, 0.25);
+  border-radius: 0px;
+  transition: background 0.4s ease, border-color 0.4s ease;
+  cursor: pointer;
+
+  &:hover {
+    background: rgba(245, 245, 240, 0.08);
+    border-color: var(--color-gold);
+    color: var(--color-gold);
+  }
+}
+
+@utility btn-primary-white {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.70rem 2.25rem;
+  background: var(--color-foreground);
+  color: var(--color-muted-foreground);
+  font-weight: 600;
+  font-size: 0.72rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  border: 1px solid rgba(245, 245, 240, 0.25);
+  border-radius: 0px;
+  transition: background 0.4s ease, border-color 0.4s ease;
+  cursor: pointer;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.08);
     border-color: var(--color-gold);
     color: var(--color-gold);
   }

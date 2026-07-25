@@ -148,11 +148,11 @@ function ApplicationForm() {
                 <ArrowLeft className="w-4 h-4" /> Back
               </button>
               {step < 4 ? (
-                <button onClick={() => setStep((s) => s + 1)} className="btn-primary !py-2.5">
+                <button onClick={() => setStep((s) => s + 1)} className="btn-primary-ivory !py-2.5">
                   Continue <ArrowRight className="w-4 h-4" />
                 </button>
               ) : (
-                <button onClick={() => setDone(true)} className="btn-primary !py-2.5">Submit application</button>
+                <button onClick={() => setDone(true)} className="btn-primary-ivory !py-2.5">Submit application</button>
               )}
             </div>
           </div>

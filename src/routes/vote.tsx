@@ -134,7 +134,7 @@ function VotePage() {
             {candidates.length === 0 ? "No contestants yet — check back soon." : `No contestants match "${query}"`}
           </p>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
             {filtered.map((c) => (
               <article key={c._id} className="group bg-card border border-border hover-lift overflow-hidden">
                 <Link to="/vote/$id" params={{ id: c._id }} className="block aspect-[3/4] overflow-hidden bg-muted relative">
@@ -151,9 +151,9 @@ function VotePage() {
                     <span className="text-xs text-muted-foreground">{(c.votes ?? 0).toLocaleString()}</span>
                   </div>
                   <div className="mt-3 flex gap-2">
-                    <button onClick={() => setSelected(c)} className="flex-1 btn-primary !py-2.5 !px-3 !text-[11px]">Vote</button>
+                    <button onClick={() => setSelected(c)} className="flex-1 btn-primary-ivory !py-2.5 !px-3 !text-[11px]">Vote</button>
                     <button
-                      onClick={() => navigator?.share?.({ title: `Vote for ${c.name}`, url: window.location.href }).catch(() => {})}
+                      onClick={() => navigator?.share?.({ title: `Vote for ${c.name}`, url: window.location.href }).catch(() => { })}
                       className="w-10 h-10 grid place-items-center border border-input hover:border-primary hover:text-primary transition-colors"
                       aria-label="Share"
                     >
@@ -192,7 +192,7 @@ function CatChip({ active, onClick, children }: any) {
   );
 }
 
-function VoteDialog({ contestant, onClose }: { contestant: Candidate; onClose: () => void }) {
+export function VoteDialog({ contestant, onClose }: { contestant: Candidate; onClose: () => void }) {
   const packagesQ = useQuery({ queryKey: ["packages"], queryFn: Public.packages });
   const packages = packagesQ.data?.packages ?? [];
   const [bundle, setBundle] = useState<VotePackage | null>(null);
@@ -203,6 +203,7 @@ function VoteDialog({ contestant, onClose }: { contestant: Candidate; onClose: (
   const [err, setErr] = useState<string | null>(null);
 
   const active = bundle ?? packages[Math.min(1, packages.length - 1)] ?? null;
+
 
   async function pay(method: "paystack" | "flutterwave") {
     if (!active || !name || !email || !phone) {
@@ -270,8 +271,8 @@ function VoteDialog({ contestant, onClose }: { contestant: Candidate; onClose: (
             </div>
           )}
           <div className="grid grid-cols-2 gap-2 mt-5">
-            <button disabled={loading} onClick={() => pay("paystack")} className="btn-primary">{loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Pay with Paystack"}</button>
-            <button disabled={loading} onClick={() => pay("flutterwave")} className="btn-outline-gold">Flutterwave</button>
+            <button disabled={loading} onClick={() => pay("paystack")} className="btn-primary-white h-10">{loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <img src={"/Paystack-Logo.png"} alt="pay with Paystack" className="h-20 object-center rounded-full" loading="lazy" />}</button>
+            <button disabled={loading} onClick={() => pay("flutterwave")} className="btn-primary-white h-10">{loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <img src={"/Flutterwave-Logo.png"} alt="pay with Flutterwave" className="h-20 object-center rounded-full" loading="lazy" />}</button>
           </div>
           <p className="text-[11px] text-muted-foreground text-center mt-3">Votes credit only after verified payment. No refunds on cast votes.</p>
         </div>

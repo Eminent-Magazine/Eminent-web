@@ -38,7 +38,7 @@ function Callback() {
             <div className="w-14 h-14 mx-auto rounded-full bg-destructive/10 text-destructive grid place-items-center"><X className="w-6 h-6" /></div>
             <h1 className="mt-6 font-display text-4xl">Payment not verified</h1>
             <p className="mt-3 text-muted-foreground text-sm">{err}</p>
-            <Link to="/register" className="btn-primary mt-6 inline-flex">Try again</Link>
+            <Link to="/register" className="btn-primary-ivory mt-6 inline-flex">Try again</Link>
           </div>
         )}
         {state === "ok" && (

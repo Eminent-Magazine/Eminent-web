@@ -45,7 +45,8 @@ export async function api<T = any>(path: string, opts: Opts = {}): Promise<T> {
     const msg = (data && typeof data === "object" && (data.message || data.error)) || `Request failed (${res.status})`;
     throw new Error(String(msg));
   }
-  return data as T;
+  // return data as T;
+  return (data && typeof data === "object" && "data" in data ? data.data : data) as T;
 }
 
 // ---------- Types ----------
@@ -67,19 +68,49 @@ export type RegistrationSettings = {
   registrationEnabled: boolean;
 };
 
+type Category = "Miss" | "Mister" | "Teen";
+type ContestantStatus = "pending" | "approved" | "rejected";
+type PaymentStatus = "paid" | "not_required" | "pending";
+
+interface SocialMedia {
+  instagram: string;
+  facebook: string;
+  twitter: string;
+  tiktok: string;
+}
+
 export type AdminUser = {
   _id: string;
   name: string;
   email: string;
-  phone?: string;
-  age?: number;
-  category?: string;
-  bio?: string;
-  status?: string;
-  paymentStatus?: string;
-  adminNotes?: string;
-  createdAt?: string;
-};
+  phone: string;
+  age: number;
+  photo: string | null;
+  bio: string;
+  category: Category;
+  paymentStatus: PaymentStatus;
+  contestantStatus: ContestantStatus;
+  transactionReference: string;
+  approvedAt: string | null; // ISO date string, or null if not yet approved
+  rejectedAt: string | null; // ISO date string, or null if not rejected
+  registeredAt: string; // ISO date string
+  __v: number;
+  socialMedia: SocialMedia;
+}
+
+// export type AdminUser = {
+//   _id: string;
+//   name: string;
+//   email: string;
+//   phone?: string;
+//   age?: number;
+//   category?: string;
+//   bio?: string;
+//   status?: string;
+//   paymentStatus?: string;
+//   adminNotes?: string;
+//   createdAt?: string;
+// };
 
 export type Transaction = {
   _id?: string;
@@ -106,7 +137,7 @@ export const Public = {
   initVote: (body: { fullName: string; email: string; phone: string; candidateId: string; numberOfVotes: number; paymentMethod: string }) =>
     api<{ data: { authorization_url: string; reference: string } }>("/payments/initialize", { body }),
   verifyVote: (reference: string) => api<{ data: any }>("/payments/verify", { query: { reference } }),
-  registrationSettings: () => api<{ data: RegistrationSettings }>("/users/registration/settings"),
+  registrationSettings: () => api<RegistrationSettings>("/users/registration/settings"),
   initRegistration: (body: { fullName: string; email: string; phone: string; paymentMethod: string }) =>
     api<{ data: { authorization_url: string; reference: string } }>("/payments/registration/initialize", { body }),
   verifyRegistration: (reference: string) => api<{ data: any }>("/payments/registration/verify", { query: { reference } }),
@@ -118,11 +149,11 @@ export const Public = {
 // ---------- Admin ----------
 export const Admin = {
   login: (email: string, password: string) => api<{ token: string; admin?: any }>("/admin/login", { body: { email, password } }),
-  stats: () => api<{ stats: any }>("/admin/stats"),
+  stats: () => api<{ users: any; votes: any; revenue: any; topCandidates: any[] }>("/admin/stats"),
   getSettings: () => api<{ settings: any }>("/admin/settings"),
   updateSettings: (settings: any) => api<{ settings: any }>("/admin/settings", { method: "PUT", body: settings }),
   users: (q: { status?: string; paymentStatus?: string; category?: string; search?: string } = {}) =>
-    api<{ users: AdminUser[] }>("/admin/users", { query: q }),
+    api<AdminUser[]>("/admin/users", { query: q }),
   user: (id: string) => api<{ user: AdminUser }>(`/admin/users/${id}`),
   updateUser: (id: string, body: any) => api<{ user: AdminUser }>(`/admin/users/${id}`, { method: "PUT", body }),
   deleteUser: (id: string) => api<{ success: boolean }>(`/admin/users/${id}`, { method: "DELETE" }),

@@ -69,7 +69,7 @@ function ContactPage() {
               <option>Other</option>
             </select>
             <textarea rows={6} placeholder="Message" className="px-4 py-3 bg-background border border-input text-sm rounded-sm" />
-            <button className="btn-primary self-start">Send message <ArrowRight className="w-4 h-4" /></button>
+            <button className="btn-primary-ivory self-start">Send message <ArrowRight className="w-4 h-4" /></button>
           </div>
         </form>
       </section>

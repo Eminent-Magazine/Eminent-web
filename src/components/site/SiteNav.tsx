@@ -31,14 +31,14 @@ export function SiteNav() {
   return (
     <>
       <header
-        className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
-          scrolled && !open
+        className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${scrolled && !open
             ? "bg-background/85 backdrop-blur-md border-b border-border"
             : "bg-transparent"
-        }`}
+          }`}
       >
         <div className="container-editorial flex h-20 items-center justify-between">
           <Link to="/" className="flex items-baseline gap-2" onClick={() => setOpen(false)}>
+            <img src={"/favicon-32.png"} alt="Eminent Logo" className="w-6 h-6 object-cover rounded-full" loading="lazy" />
             <span className="font-display text-2xl md:text-3xl text-ivory">Eminent</span>
             <span className="text-[10px] tracking-[0.4em] uppercase text-gold font-semibold">
               Magazine
@@ -62,9 +62,8 @@ export function SiteNav() {
 
       {/* Full-screen overlay menu */}
       <div
-        className={`fixed inset-0 z-40 bg-ink transition-all duration-500 ${
-          open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
-        }`}
+        className={`fixed inset-0 z-40 bg-ink transition-all duration-500 ${open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+          }`}
       >
         <div className="container-editorial h-full flex flex-col justify-center">
           <p className="eyebrow eyebrow-dot mb-10">Navigate</p>
@@ -80,13 +79,13 @@ export function SiteNav() {
                 <span className="text-[10px] text-gold/60 tabular-nums tracking-widest">
                   0{i + 1}
                 </span>
-                <span className="font-display text-5xl md:text-7xl lg:text-8xl leading-[0.9] tracking-tight">
+                <span className="font-display text-3xl sm:text-5xl md:text-7xl lg:text-8xl leading-[0.9] tracking-tight">
                   {item.label}
                 </span>
               </Link>
             ))}
           </nav>
-          <div className="mt-16 flex flex-wrap items-center gap-8 text-xs text-ivory/60 uppercase tracking-[0.28em]">
+          <div className="mt-6 md:mt-10 lg:mt-16 flex flex-wrap items-center gap-2 md:gap-8 text-[10px] md:text-xs text-ivory/60 uppercase tracking-[0.28em]">
             <a href="mailto:hello@eminentmagazine.com" className="hover:text-gold">hello@eminentmagazine.com</a>
             <a href="mailto:press@eminentmagazine.com" className="hover:text-gold">press@eminentmagazine.com</a>
           </div>

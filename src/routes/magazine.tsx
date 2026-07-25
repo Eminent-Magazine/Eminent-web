@@ -68,7 +68,7 @@ function MagazinePage() {
         <div className="container-editorial py-20 text-center">
           <h2 className="font-display text-4xl md:text-5xl">Want it in print?</h2>
           <p className="mt-4 text-muted-foreground max-w-lg mx-auto">Order this issue, past covers, or a full-year subscription from our store.</p>
-          <Link to="/store" className="btn-primary mt-8">Shop the Magazine</Link>
+          <Link to="/store" className="btn-primary-ivory mt-8">Shop the Magazine</Link>
         </div>
       </section>
     </SiteLayout>

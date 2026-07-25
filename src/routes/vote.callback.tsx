@@ -37,7 +37,7 @@ function Callback() {
             <div className="w-14 h-14 mx-auto rounded-full bg-primary/10 text-primary grid place-items-center"><Check className="w-6 h-6" /></div>
             <h1 className="mt-6 font-display text-4xl">Vote confirmed</h1>
             <p className="mt-3 text-muted-foreground text-sm">Thank you — your votes have been credited.</p>
-            <Link to="/vote" className="btn-primary mt-8 inline-flex">Back to voting</Link>
+            <Link to="/vote" className="btn-primary-ivory mt-8 inline-flex">Back to voting</Link>
           </>
         )}
         {state === "err" && (
@@ -45,7 +45,7 @@ function Callback() {
             <div className="w-14 h-14 mx-auto rounded-full bg-destructive/10 text-destructive grid place-items-center"><X className="w-6 h-6" /></div>
             <h1 className="mt-6 font-display text-4xl">Verification failed</h1>
             <p className="mt-3 text-muted-foreground text-sm">{msg}</p>
-            <Link to="/vote" className="btn-primary mt-8 inline-flex">Try again</Link>
+            <Link to="/vote" className="btn-primary-ivory mt-8 inline-flex">Try again</Link>
           </>
         )}
       </section>

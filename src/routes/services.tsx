@@ -86,7 +86,7 @@ function ServicesPage() {
             </select>
           </div>
           <textarea placeholder="Tell us about the event or project" rows={5} className="px-4 py-3 bg-card border border-input text-sm rounded-sm" />
-          <button className="btn-primary self-start">
+          <button className="btn-primary-ivory self-start">
             Send Request <ArrowRight className="w-4 h-4" />
           </button>
         </form>

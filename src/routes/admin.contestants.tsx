@@ -46,9 +46,9 @@ function ContestantsPage() {
                 <td className="px-4 py-2 tabular-nums">{(c.votes ?? 0).toLocaleString()}</td>
                 <td className="px-4 py-2 text-right">
                   <div className="inline-flex gap-1">
-                    <button title="Adjust votes" onClick={() => setVoteFor(c)} className="w-8 h-8 grid place-items-center border border-input hover:border-gold hover:text-gold"><TrendingUp className="w-4 h-4" /></button>
-                    <button title="Edit" onClick={() => setEditing(c)} className="w-8 h-8 grid place-items-center border border-input hover:border-primary hover:text-primary"><Pencil className="w-4 h-4" /></button>
-                    <button title="Delete" onClick={() => { if (confirm(`Delete ${c.name}?`)) del.mutate(c._id); }} className="w-8 h-8 grid place-items-center border border-input hover:border-destructive hover:text-destructive"><Trash2 className="w-4 h-4" /></button>
+                    <button type="button" title="Adjust votes" onClick={() => setVoteFor(c)} className="w-8 h-8 grid cursor-pointer place-items-center border border-input hover:border-gold hover:text-gold"><TrendingUp className="w-4 h-4" /></button>
+                    <button type="button" title="Edit" onClick={() => setEditing(c)} className="w-8 h-8 grid cursor-pointer place-items-center border border-input hover:border-green-200 hover:text-green-200"><Pencil className="w-4 h-4" /></button>
+                    <button type="button" title="Delete" onClick={() => { if (confirm(`Delete ${c.name}?`)) del.mutate(c._id); }} className="w-8 h-8 grid cursor-pointer place-items-center border border-input hover:border-destructive hover:text-destructive"><Trash2 className="w-4 h-4" /></button>
                   </div>
                 </td>
               </tr>
@@ -113,7 +113,7 @@ function AdjustVotesDialog({ candidate, onClose }: { candidate: Candidate; onClo
           <input placeholder="Reason (audit log)" value={reason} onChange={(e) => setReason(e.target.value)} className="w-full h-10 px-3 bg-card border border-input text-sm" />
         </div>
         {m.error && <p className="text-xs text-destructive mt-3">{(m.error as Error).message}</p>}
-        <button disabled={m.isPending || !reason} onClick={() => m.mutate()} className="btn-primary w-full mt-5">{m.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Apply"}</button>
+        <button disabled={m.isPending || !reason} onClick={() => m.mutate()} className="btn-primary-ivory w-full mt-5">{m.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Apply"}</button>
       </div>
     </div>
   );
