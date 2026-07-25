@@ -122,9 +122,9 @@ function ProfileForm({ transactionReference }: { transactionReference?: string }
   }
 
   return (
-    <form onSubmit={submit} className="bg-card border border-border p-8 space-y-4 mt-10">
+    <form onSubmit={submit} className="bg-card border border-border p-3 sm:p-4 md:p-8 space-y-4 mt-10">
       <p className="eyebrow">Contestant profile</p>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-1 md:gap-3">
         <input required placeholder="Full name" className="h-12 px-4 bg-background border border-input text-sm rounded-sm" value={form.name} onChange={(e) => set("name", e.target.value)} />
         <input required type="email" placeholder="Email" className="h-12 px-4 bg-background border border-input text-sm rounded-sm" value={form.email} onChange={(e) => set("email", e.target.value)} />
         <input required placeholder="Phone" className="h-12 px-4 bg-background border border-input text-sm rounded-sm" value={form.phone} onChange={(e) => set("phone", e.target.value)} />
@@ -132,7 +132,7 @@ function ProfileForm({ transactionReference }: { transactionReference?: string }
       </div>
       <input required placeholder="Category (e.g. Miss, Mister, Teen)" className="w-full h-12 px-4 bg-background border border-input text-sm rounded-sm" value={form.category} onChange={(e) => set("category", e.target.value)} />
       <textarea required rows={5} placeholder="Bio — tell us your story" className="w-full px-4 py-3 bg-background border border-input text-sm rounded-sm" value={form.bio} onChange={(e) => set("bio", e.target.value)} />
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-1 md:gap-3">
         <input placeholder="Instagram handle" className="h-12 px-4 bg-background border border-input text-sm rounded-sm" value={form.instagram} onChange={(e) => set("instagram", e.target.value)} />
         <input placeholder="TikTok handle" className="h-12 px-4 bg-background border border-input text-sm rounded-sm" value={form.tiktok} onChange={(e) => set("tiktok", e.target.value)} />
       </div>
