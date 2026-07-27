@@ -4,8 +4,12 @@ import { useQuery } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 import { SiteLayout, PageHeader } from "@/components/site/SiteLayout";
 import { Public } from "@/lib/pageantApi";
+import { RegisterPageSkeleton } from "@/components/site/RegisterSkeleton";
 
 export const Route = createFileRoute("/register")({
+  pendingComponent: () => <RegisterPageSkeleton />,
+  pendingMs: 150,
+  pendingMinMs: 250,
   head: () => ({
     meta: [
       { title: "Contestant Registration · Eminent Magazine" },
@@ -21,11 +25,11 @@ function RegisterPage() {
   const settingsQ = useQuery({ queryKey: ["reg-settings"], queryFn: Public.registrationSettings });
   const s = settingsQ.data;
 
-  console.log("public registrations settings:", s)
 
   if (settingsQ.isLoading) {
-    return <SiteLayout><div className="py-32 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-muted-foreground" /></div></SiteLayout>;
+    return <RegisterPageSkeleton />;
   }
+
   if (!s?.registrationEnabled) {
     return (
       <SiteLayout>

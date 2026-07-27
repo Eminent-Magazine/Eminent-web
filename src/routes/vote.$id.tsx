@@ -4,8 +4,8 @@ import { useState } from "react";
 import { Loader2, ArrowLeft, Share2, Crown, Users, TrendingUp, AlertTriangle } from "lucide-react";
 
 import { SiteLayout } from "@/components/site/SiteLayout";
-import { Public } from "@/lib/pageantApi";
-import { VoteDialog } from "./vote";
+import { Public, ResultCandidate } from "@/lib/pageantApi";
+import { VoteDialog } from "./vote.index";
 
 export const Route = createFileRoute("/vote/$id")({
   head: () => ({
@@ -27,7 +27,7 @@ function ContestantPage() {
 
   const c = q.data?.candidate;
   const results = resultsQ.data?.results ?? [];
-  const rank = c ? results.findIndex((r: any) => r._id === c._id) + 1 : 0;
+  const rank = c ? results?.[0]?.candidates.find((r: ResultCandidate) =>  r.candidateId === c._id) : 0;
   const totalVotes = results.reduce((sum: number, r: any) => sum + (r.votes ?? 0), 0);
   const share = c
     ? Number(((c.votes ?? 0) / Math.max(totalVotes, 1)) * 100).toFixed(1)
@@ -35,10 +35,10 @@ function ContestantPage() {
 
   return (
     <SiteLayout>
-      <section className="container-editorial py-12 md:py-16">
+      <section className="container-editorial mt-4 sm:mt-6 md:mt-10 py-12 md:py-16">
         <Link
           to="/vote"
-          className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.24em] text-muted-foreground hover:text-primary"
+          className="cursor-pointer inline-flex items-center gap-2 text-xs uppercase tracking-[0.24em] text-muted-foreground hover:text-primary"
         >
           <ArrowLeft className="w-4 h-4" /> Back to contestants
         </Link>
@@ -55,16 +55,16 @@ function ContestantPage() {
         ) : (
           <>
             <div className="mt-8 grid gap-10 md:gap-14 md:grid-cols-2">
-              <div className="relative aspect-[3/4] bg-muted overflow-hidden border border-border">
+              <div className="relative aspect-square bg-muted overflow-hidden border border-border">
                 {c.photo ? (
                   <img src={c.photo} alt={c.name} className="w-full h-full object-cover" />
                 ) : (
                   <div className="w-full h-full grid place-items-center text-muted-foreground text-sm">No photo</div>
                 )}
-                {rank > 0 && rank <= 3 && (
+                {rank && rank.rank > 0 && rank?.rank <= 3 && (
                   <div className="absolute top-4 left-4 bg-ink text-ivory px-3 py-2 flex items-center gap-2">
                     <Crown className="w-4 h-4 text-gold" />
-                    <span className="text-[10px] uppercase tracking-[0.28em]">Rank #{rank}</span>
+                    <span className="text-[10px] uppercase tracking-[0.28em]">Rank #{rank?.rank}</span>
                   </div>
                 )}
               </div>
@@ -79,7 +79,7 @@ function ContestantPage() {
                 <div className="mt-8 grid grid-cols-3 gap-3">
                   <Stat icon={<TrendingUp className="w-4 h-4" />} label="Votes" value={(c.votes ?? 0).toLocaleString()} />
                   <Stat icon={<Users className="w-4 h-4" />} label="Vote share" value={`${share}%`} />
-                  <Stat icon={<Crown className="w-4 h-4" />} label="Rank" value={rank > 0 ? `#${rank}` : "—"} />
+                  <Stat icon={<Crown className="w-4 h-4" />} label="Rank" value={rank && rank.rank > 0 ? `#${rank.rank}` : "—"} />
                 </div>
 
                 {c.bio && (
@@ -102,7 +102,7 @@ function ContestantPage() {
                 </div>
 
                 <div className="mt-6 flex flex-col sm:flex-row gap-3">
-                  <button onClick={() => setVoting(true)} className="btn-primary flex-1">
+                  <button onClick={() => setVoting(true)} className="btn-ghost-ivory !rounded-none flex-1">
                     Vote for {c.name.split(" ")[0]}
                   </button>
                   <button
@@ -116,7 +116,7 @@ function ContestantPage() {
                         }
                       })
                     }
-                    className="btn-outline-gold inline-flex items-center justify-center gap-2"
+                    className="btn-primary-ivory inline-flex items-center justify-center gap-2"
                   >
                     <Share2 className="w-4 h-4" /> Share
                   </button>

@@ -1,8 +1,8 @@
 // Client for the Pageant Voting API, routed through our same-origin proxy
 // at /api/public/pageant/* to avoid CORS restrictions.
 
-const BASE = "/api/public/pageant";
-const TOKEN_KEY = "pageant_admin_token";
+const BASE = import.meta.env.VITE_BASE_URL || "";
+const TOKEN_KEY = import.meta.env.VITE_TOKEN_KEY || "";
 
 export function getAdminToken(): string | null {
   if (typeof window === "undefined") return null;
@@ -58,6 +58,10 @@ export type Candidate = {
   bio?: string;
   category?: string;
   votes?: number;
+  userId: string;
+  createdAt: string;
+  __v: number;
+  isActive: boolean;
 };
 
 export type VotePackage = { name: string; numberOfVotes: number; price: number; currency: string };
@@ -126,12 +130,34 @@ export type Transaction = {
   createdAt?: string;
 };
 
+// ---------- Results ----------
+export type ResultCandidate = {
+  name: string;
+  votes: number;
+  photo: string;
+  bio: string;
+  age: number;
+  candidateId: string;
+  rank: number;
+  isWinner: boolean;
+};
+
+export type CategoryResult = {
+  _id: Category; // category name, e.g. "Face of Eminent"
+  candidates: ResultCandidate[];
+  totalVotes: number;
+};
+
+export type ResultsResponse = {
+  results: CategoryResult[];
+};
+
 // ---------- Public ----------
 export const Public = {
   candidates: () => api<{ candidates: Candidate[] }>("/candidates"),
   candidatesByCategory: (category: string) => api<{ candidates: Candidate[] }>(`/candidates/category/${encodeURIComponent(category)}`),
   candidate: (id: string) => api<{ candidate: Candidate }>(`/candidates/${id}`),
-  results: () => api<{ results: any[] }>("/votes/results"),
+  results: () => api<ResultsResponse>("/votes/results"),
   statistics: () => api<{ statistics: any }>("/votes/statistics"),
   packages: () => api<{ packages: VotePackage[] }>("/payments/packages"),
   initVote: (body: { fullName: string; email: string; phone: string; candidateId: string; numberOfVotes: number; paymentMethod: string }) =>

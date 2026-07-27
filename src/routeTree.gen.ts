@@ -31,6 +31,7 @@ import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as CategorySlugRouteImport } from './routes/category.$slug'
 import { Route as RegisterCallbackRouteImport } from './routes/register.callback'
 import { Route as StoriesSlugRouteImport } from './routes/stories.$slug'
+import { Route as VoteIndexRouteImport } from './routes/vote.index'
 import { Route as VoteIdRouteImport } from './routes/vote.$id'
 import { Route as VoteCallbackRouteImport } from './routes/vote.callback'
 import { Route as ApiPublicPageantSplatRouteImport } from './routes/api/public/pageant.$'
@@ -145,6 +146,11 @@ const StoriesSlugRoute = StoriesSlugRouteImport.update({
   path: '/stories/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const VoteIndexRoute = VoteIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => VoteRoute,
+} as any)
 const VoteIdRoute = VoteIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -186,6 +192,7 @@ export interface FileRoutesByFullPath {
   '/vote/$id': typeof VoteIdRoute
   '/vote/callback': typeof VoteCallbackRoute
   '/admin/': typeof AdminIndexRoute
+  '/vote/': typeof VoteIndexRoute
   '/api/public/pageant/$': typeof ApiPublicPageantSplatRoute
 }
 export interface FileRoutesByTo {
@@ -200,7 +207,6 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/store': typeof StoreRoute
   '/terms': typeof TermsRoute
-  '/vote': typeof VoteRouteWithChildren
   '/admin/contestants': typeof AdminContestantsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -212,6 +218,7 @@ export interface FileRoutesByTo {
   '/vote/$id': typeof VoteIdRoute
   '/vote/callback': typeof VoteCallbackRoute
   '/admin': typeof AdminIndexRoute
+  '/vote': typeof VoteIndexRoute
   '/api/public/pageant/$': typeof ApiPublicPageantSplatRoute
 }
 export interface FileRoutesById {
@@ -240,6 +247,7 @@ export interface FileRoutesById {
   '/vote/$id': typeof VoteIdRoute
   '/vote/callback': typeof VoteCallbackRoute
   '/admin/': typeof AdminIndexRoute
+  '/vote/': typeof VoteIndexRoute
   '/api/public/pageant/$': typeof ApiPublicPageantSplatRoute
 }
 export interface FileRouteTypes {
@@ -269,6 +277,7 @@ export interface FileRouteTypes {
     | '/vote/$id'
     | '/vote/callback'
     | '/admin/'
+    | '/vote/'
     | '/api/public/pageant/$'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -283,7 +292,6 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/store'
     | '/terms'
-    | '/vote'
     | '/admin/contestants'
     | '/admin/login'
     | '/admin/settings'
@@ -295,6 +303,7 @@ export interface FileRouteTypes {
     | '/vote/$id'
     | '/vote/callback'
     | '/admin'
+    | '/vote'
     | '/api/public/pageant/$'
   id:
     | '__root__'
@@ -322,6 +331,7 @@ export interface FileRouteTypes {
     | '/vote/$id'
     | '/vote/callback'
     | '/admin/'
+    | '/vote/'
     | '/api/public/pageant/$'
   fileRoutesById: FileRoutesById
 }
@@ -500,6 +510,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StoriesSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/vote/': {
+      id: '/vote/'
+      path: '/'
+      fullPath: '/vote/'
+      preLoaderRoute: typeof VoteIndexRouteImport
+      parentRoute: typeof VoteRoute
+    }
     '/vote/$id': {
       id: '/vote/$id'
       path: '/$id'
@@ -559,11 +576,13 @@ const RegisterRouteWithChildren = RegisterRoute._addFileChildren(
 interface VoteRouteChildren {
   VoteIdRoute: typeof VoteIdRoute
   VoteCallbackRoute: typeof VoteCallbackRoute
+  VoteIndexRoute: typeof VoteIndexRoute
 }
 
 const VoteRouteChildren: VoteRouteChildren = {
   VoteIdRoute: VoteIdRoute,
   VoteCallbackRoute: VoteCallbackRoute,
+  VoteIndexRoute: VoteIndexRoute,
 }
 
 const VoteRouteWithChildren = VoteRoute._addFileChildren(VoteRouteChildren)

@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-const UPSTREAM = "https://pageant-voting-api.onrender.com";
+const UPSTREAM = import.meta.env.VITE_API_URL || "";
 
 async function proxy({ request, params }: { request: Request; params: { _splat?: string } }) {
   const splat = params._splat ?? "";

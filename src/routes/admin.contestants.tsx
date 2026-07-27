@@ -79,7 +79,7 @@ function EditDialog({ value, onClose }: { value: Candidate | null; onClose: () =
       <div className="bg-background border border-border max-w-md w-full p-6" onClick={(e) => e.stopPropagation()}>
         <div className="flex justify-between mb-4">
           <h2 className="font-display text-2xl">{value ? "Edit contestant" : "New contestant"}</h2>
-          <button onClick={onClose}><X className="w-4 h-4" /></button>
+          <button onClick={onClose} className="cursor-pointer"><X className="w-4 h-4" /></button>
         </div>
         <div className="space-y-3">
           <input placeholder="Name" value={f.name ?? ""} onChange={(e) => setF({ ...f, name: e.target.value })} className="w-full h-10 px-3 bg-card border border-input text-sm" />
@@ -89,7 +89,7 @@ function EditDialog({ value, onClose }: { value: Candidate | null; onClose: () =
           <textarea placeholder="Bio" rows={4} value={f.bio ?? ""} onChange={(e) => setF({ ...f, bio: e.target.value })} className="w-full px-3 py-2 bg-card border border-input text-sm" />
         </div>
         {save.error && <p className="text-xs text-destructive mt-3">{(save.error as Error).message}</p>}
-        <button disabled={save.isPending} onClick={() => save.mutate()} className="btn-primary w-full mt-5">{save.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Save"}</button>
+        <button disabled={save.isPending} onClick={() => save.mutate()} className="btn-ghost-ivory w-full mt-5">{save.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Save"}</button>
       </div>
     </div>
   );
