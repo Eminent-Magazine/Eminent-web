@@ -48,6 +48,7 @@ function VotePage() {
 
   const stats = statsQ.data?.statistics;
   const leaderboard = (resultsQ.data?.results?.[0]?.candidates ?? []).slice(0, 5);
+  console.log("leaderboard statistics from stats:", stats)
 
   return (
     <SiteLayout>

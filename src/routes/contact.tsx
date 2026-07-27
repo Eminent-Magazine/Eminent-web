@@ -1,6 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Mail, Phone, MapPin, MessageCircle, ArrowRight, Instagram } from "lucide-react";
+import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { Mail, Phone, MapPin, MessageCircle, ArrowRight, Instagram, Loader2, Check } from "lucide-react";
 import { SiteLayout, PageHeader } from "@/components/site/SiteLayout";
+import { Public, type ContactSubject } from "@/lib/pageantApi";
+
+const SUBJECTS: ContactSubject[] = ["Booking / Quote", "Press / Media", "Modeling Academy", "Pageant enquiry", "Partnerships", "Other"];
+
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -53,26 +59,59 @@ function ContactPage() {
           </div>
         </div>
 
-        <form onSubmit={(e) => e.preventDefault()} className="bg-card border border-border p-8">
-          <p className="eyebrow">Send a message</p>
-          <h2 className="font-display text-3xl mt-2">Or write to us.</h2>
-          <div className="mt-6 grid gap-4">
-            <input placeholder="Your name" className="h-12 px-4 bg-background border border-input text-sm rounded-sm" />
-            <input placeholder="Email" type="email" className="h-12 px-4 bg-background border border-input text-sm rounded-sm" />
-            <select className="h-12 px-4 bg-background border border-input text-sm rounded-sm">
-              <option>What's this about?</option>
-              <option>Booking / Quote</option>
-              <option>Press / Media</option>
-              <option>Modeling Academy</option>
-              <option>Pageant enquiry</option>
-              <option>Partnerships</option>
-              <option>Other</option>
-            </select>
-            <textarea rows={6} placeholder="Message" className="px-4 py-3 bg-background border border-input text-sm rounded-sm" />
-            <button className="btn-primary-ivory self-start">Send message <ArrowRight className="w-4 h-4" /></button>
-          </div>
-        </form>
+        <ContactForm />
+
       </section>
     </SiteLayout>
   );
 }
+
+function ContactForm() {
+  const [form, setForm] = useState({ name: "", email: "", subject: "" as ContactSubject | "", message: "" });
+  const [done, setDone] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+  const m = useMutation({
+    mutationFn: () => Public.contact({ name: form.name, email: form.email, subject: form.subject as ContactSubject, message: form.message }),
+    onSuccess: () => { setDone(true); setErr(null); },
+    onError: (e: Error) => setErr(e.message),
+  });
+
+  function submit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!form.subject) { setErr("Please choose a subject"); return; }
+    if (form.message.trim().length < 10) { setErr("Message must be at least 10 characters"); return; }
+    m.mutate();
+  }
+
+  if (done) {
+    return (
+      <div className="bg-card border border-border p-8 text-center">
+        <div className="w-12 h-12 mx-auto rounded-full bg-primary/10 text-primary grid place-items-center"><Check className="w-5 h-5" /></div>
+        <h2 className="font-display text-3xl mt-4">Message sent</h2>
+        <p className="mt-2 text-sm text-muted-foreground">Thanks — we'll get back to you within one business day.</p>
+        <button onClick={() => { setDone(false); setForm({ name: "", email: "", subject: "", message: "" }); }} className="btn-primary-ivory mt-6 inline-flex">Send another</button>
+      </div>
+    );
+  }
+
+  return (
+    <form onSubmit={submit} className="bg-card border border-border p-8">
+      <p className="eyebrow">Send a message</p>
+      <h2 className="font-display text-3xl mt-2">Or write to us.</h2>
+      <div className="mt-6 grid gap-4">
+        <input required placeholder="Your name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="h-12 px-4 bg-background border border-input text-sm rounded-sm" />
+        <input required type="email" placeholder="Email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="h-12 px-4 bg-background border border-input text-sm rounded-sm" />
+        <select required value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value as ContactSubject })} className="h-12 px-4 bg-background border border-input text-sm rounded-sm">
+          <option value="">What's this about?</option>
+          {SUBJECTS.map((s) => <option key={s} value={s}>{s}</option>)}
+        </select>
+        <textarea required rows={6} placeholder="Message (min 10 characters)" value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} className="px-4 py-3 bg-background border border-input text-sm rounded-sm" />
+        {err && <p className="text-xs text-destructive">{err}</p>}
+        <button disabled={m.isPending} className="btn-primary-ivory self-start">
+          {m.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <>Send message <ArrowRight className="w-4 h-4" /></>}
+        </button>
+      </div>
+    </form>
+  );
+}
+

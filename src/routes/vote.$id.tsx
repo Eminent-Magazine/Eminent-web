@@ -7,6 +7,7 @@ import { SiteLayout } from "@/components/site/SiteLayout";
 import { Public, ResultCandidate } from "@/lib/pageantApi";
 import { VoteDialog } from "./vote.index";
 
+
 export const Route = createFileRoute("/vote/$id")({
   head: () => ({
     meta: [
@@ -24,6 +25,7 @@ function ContestantPage() {
   const q = useQuery({ queryKey: ["candidate", id], queryFn: () => Public.candidate(id), refetchInterval: 30_000 });
   const resultsQ = useQuery({ queryKey: ["results"], queryFn: Public.results, refetchInterval: 30_000 });
   const [voting, setVoting] = useState(false);
+
 
   const c = q.data?.candidate;
   const results = resultsQ.data?.results ?? [];
@@ -52,6 +54,7 @@ function ContestantPage() {
             <p className="text-muted-foreground">Contestant not found.</p>
             <Link to="/vote" className="btn-primary mt-6 inline-flex">Back to voting</Link>
           </div>
+
         ) : (
           <>
             <div className="mt-8 grid gap-10 md:gap-14 md:grid-cols-2">
@@ -135,6 +138,7 @@ function ContestantPage() {
     </SiteLayout>
   );
 }
+
 
 function Stat({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (

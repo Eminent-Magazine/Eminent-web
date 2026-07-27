@@ -1,8 +1,8 @@
 // Client for the Pageant Voting API, routed through our same-origin proxy
 // at /api/public/pageant/* to avoid CORS restrictions.
 
-const BASE = import.meta.env.VITE_BASE_URL || "";
-const TOKEN_KEY = import.meta.env.VITE_TOKEN_KEY || "";
+const BASE = "/api/public/pageant";
+const TOKEN_KEY = "pageant_admin_token";
 
 export function getAdminToken(): string | null {
   if (typeof window === "undefined") return null;
@@ -203,10 +203,8 @@ export type ContactMessage = {
   message: string;
   status: MessageStatus;
   adminNotes?: string;
-  createdAt: string; // ISO 8601 date string
-  updatedAt: string; // ISO 8601 date string
-  __v: number; // present once status moves past "new"
-  readAt?: string | null; 
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 export type QuoteRequest = {

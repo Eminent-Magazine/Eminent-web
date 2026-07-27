@@ -1,6 +1,6 @@
 import { createFileRoute, Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { LogOut, LayoutDashboard, Users, Crown, Receipt, Settings } from "lucide-react";
+import { LogOut, LayoutDashboard, Users, Crown, Receipt, Settings, MessageSquare, FileText } from "lucide-react";
 import { clearAdminToken, getAdminToken } from "@/lib/pageantApi";
 
 export const Route = createFileRoute("/admin")({
@@ -13,8 +13,11 @@ const NAV: { to: string; label: string; icon: any; exact?: boolean }[] = [
   { to: "/admin/users", label: "Applications", icon: Users },
   { to: "/admin/contestants", label: "Contestants", icon: Crown },
   { to: "/admin/transactions", label: "Transactions", icon: Receipt },
+  { to: "/admin/messages", label: "Messages", icon: MessageSquare },
+  { to: "/admin/quotes", label: "Quotes", icon: FileText },
   { to: "/admin/settings", label: "Settings", icon: Settings },
 ];
+
 
 function AdminLayout() {
   const navigate = useNavigate();

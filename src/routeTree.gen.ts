@@ -25,6 +25,8 @@ import { Route as VoteRouteImport } from './routes/vote'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminContestantsRouteImport } from './routes/admin.contestants'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
+import { Route as AdminMessagesRouteImport } from './routes/admin.messages'
+import { Route as AdminQuotesRouteImport } from './routes/admin.quotes'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
 import { Route as AdminTransactionsRouteImport } from './routes/admin.transactions'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
@@ -116,6 +118,16 @@ const AdminLoginRoute = AdminLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminMessagesRoute = AdminMessagesRouteImport.update({
+  id: '/messages',
+  path: '/messages',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminQuotesRoute = AdminQuotesRouteImport.update({
+  id: '/quotes',
+  path: '/quotes',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminSettingsRoute = AdminSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -183,6 +195,8 @@ export interface FileRoutesByFullPath {
   '/vote': typeof VoteRouteWithChildren
   '/admin/contestants': typeof AdminContestantsRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/messages': typeof AdminMessagesRoute
+  '/admin/quotes': typeof AdminQuotesRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/transactions': typeof AdminTransactionsRoute
   '/admin/users': typeof AdminUsersRoute
@@ -209,6 +223,8 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/admin/contestants': typeof AdminContestantsRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/messages': typeof AdminMessagesRoute
+  '/admin/quotes': typeof AdminQuotesRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/transactions': typeof AdminTransactionsRoute
   '/admin/users': typeof AdminUsersRoute
@@ -238,6 +254,8 @@ export interface FileRoutesById {
   '/vote': typeof VoteRouteWithChildren
   '/admin/contestants': typeof AdminContestantsRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/messages': typeof AdminMessagesRoute
+  '/admin/quotes': typeof AdminQuotesRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/transactions': typeof AdminTransactionsRoute
   '/admin/users': typeof AdminUsersRoute
@@ -268,6 +286,8 @@ export interface FileRouteTypes {
     | '/vote'
     | '/admin/contestants'
     | '/admin/login'
+    | '/admin/messages'
+    | '/admin/quotes'
     | '/admin/settings'
     | '/admin/transactions'
     | '/admin/users'
@@ -294,6 +314,8 @@ export interface FileRouteTypes {
     | '/terms'
     | '/admin/contestants'
     | '/admin/login'
+    | '/admin/messages'
+    | '/admin/quotes'
     | '/admin/settings'
     | '/admin/transactions'
     | '/admin/users'
@@ -322,6 +344,8 @@ export interface FileRouteTypes {
     | '/vote'
     | '/admin/contestants'
     | '/admin/login'
+    | '/admin/messages'
+    | '/admin/quotes'
     | '/admin/settings'
     | '/admin/transactions'
     | '/admin/users'
@@ -468,6 +492,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLoginRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/messages': {
+      id: '/admin/messages'
+      path: '/messages'
+      fullPath: '/admin/messages'
+      preLoaderRoute: typeof AdminMessagesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/quotes': {
+      id: '/admin/quotes'
+      path: '/quotes'
+      fullPath: '/admin/quotes'
+      preLoaderRoute: typeof AdminQuotesRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/settings': {
       id: '/admin/settings'
       path: '/settings'
@@ -544,6 +582,8 @@ declare module '@tanstack/react-router' {
 interface AdminRouteChildren {
   AdminContestantsRoute: typeof AdminContestantsRoute
   AdminLoginRoute: typeof AdminLoginRoute
+  AdminMessagesRoute: typeof AdminMessagesRoute
+  AdminQuotesRoute: typeof AdminQuotesRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
   AdminTransactionsRoute: typeof AdminTransactionsRoute
   AdminUsersRoute: typeof AdminUsersRoute
@@ -553,6 +593,8 @@ interface AdminRouteChildren {
 const AdminRouteChildren: AdminRouteChildren = {
   AdminContestantsRoute: AdminContestantsRoute,
   AdminLoginRoute: AdminLoginRoute,
+  AdminMessagesRoute: AdminMessagesRoute,
+  AdminQuotesRoute: AdminQuotesRoute,
   AdminSettingsRoute: AdminSettingsRoute,
   AdminTransactionsRoute: AdminTransactionsRoute,
   AdminUsersRoute: AdminUsersRoute,

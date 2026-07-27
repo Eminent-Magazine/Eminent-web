@@ -1,8 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Camera, Newspaper, Sparkles, Users, Crown, Radio, ArrowRight } from "lucide-react";
+import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { Camera, Newspaper, Sparkles, Users, Crown, Radio, ArrowRight, Loader2, Check } from "lucide-react";
 import { SiteLayout, PageHeader } from "@/components/site/SiteLayout";
+import { Public, type QuoteService } from "@/lib/pageantApi";
 import services from "@/assets/services-videography.jpg";
 import magStack from "@/assets/magazine-stack.jpg";
+
 
 export const Route = createFileRoute("/services")({
   head: () => ({
@@ -73,24 +77,59 @@ function ServicesPage() {
           <h2 className="font-display text-4xl md:text-5xl mt-3">Tell us about your project.</h2>
           <p className="mt-3 text-muted-foreground">We reply within one business day with a scoped proposal and calendar.</p>
         </div>
-        <form onSubmit={(e) => e.preventDefault()} className="max-w-2xl mx-auto grid gap-4">
-          <div className="grid md:grid-cols-2 gap-4">
-            <input placeholder="Your name" className="h-12 px-4 bg-card border border-input text-sm rounded-sm" />
-            <input placeholder="Email" type="email" className="h-12 px-4 bg-card border border-input text-sm rounded-sm" />
-          </div>
-          <div className="grid md:grid-cols-2 gap-4">
-            <input placeholder="Phone / WhatsApp" className="h-12 px-4 bg-card border border-input text-sm rounded-sm" />
-            <select className="h-12 px-4 bg-card border border-input text-sm rounded-sm">
-              <option>Service needed…</option>
-              {SERVICES.map((s) => <option key={s.title}>{s.title}</option>)}
-            </select>
-          </div>
-          <textarea placeholder="Tell us about the event or project" rows={5} className="px-4 py-3 bg-card border border-input text-sm rounded-sm" />
-          <button className="btn-primary-ivory self-start">
-            Send Request <ArrowRight className="w-4 h-4" />
-          </button>
-        </form>
+        <QuoteForm />
+
       </section>
     </SiteLayout>
   );
 }
+
+function QuoteForm() {
+  const [form, setForm] = useState({ name: "", email: "", phone: "", service: "" as QuoteService | "", message: "" });
+  const [err, setErr] = useState<string | null>(null);
+  const [done, setDone] = useState(false);
+  const m = useMutation({
+    mutationFn: () => Public.quote({ ...form, service: form.service as QuoteService }),
+    onSuccess: () => { setDone(true); setErr(null); },
+    onError: (e: Error) => setErr(e.message),
+  });
+
+  function submit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!form.service) { setErr("Please choose a service"); return; }
+    m.mutate();
+  }
+
+  if (done) {
+    return (
+      <div className="max-w-2xl mx-auto text-center bg-card border border-border p-10">
+        <div className="w-12 h-12 mx-auto rounded-full bg-primary/10 text-primary grid place-items-center"><Check className="w-5 h-5" /></div>
+        <h3 className="font-display text-3xl mt-4">Request received</h3>
+        <p className="mt-2 text-sm text-muted-foreground">We'll send a scoped proposal within one business day.</p>
+        <button onClick={() => { setDone(false); setForm({ name: "", email: "", phone: "", service: "", message: "" }); }} className="btn-primary-ivory mt-6 inline-flex">Send another</button>
+      </div>
+    );
+  }
+
+  return (
+    <form onSubmit={submit} className="max-w-2xl mx-auto grid gap-4">
+      <div className="grid md:grid-cols-2 gap-4">
+        <input required placeholder="Your name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="h-12 px-4 bg-card border border-input text-sm rounded-sm" />
+        <input required type="email" placeholder="Email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="h-12 px-4 bg-card border border-input text-sm rounded-sm" />
+      </div>
+      <div className="grid md:grid-cols-2 gap-4">
+        <input required placeholder="Phone / WhatsApp" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className="h-12 px-4 bg-card border border-input text-sm rounded-sm" />
+        <select required value={form.service} onChange={(e) => setForm({ ...form, service: e.target.value as QuoteService })} className="h-12 px-4 bg-card border border-input text-sm rounded-sm">
+          <option value="">Service needed…</option>
+          {SERVICES.map((s) => <option key={s.title} value={s.title}>{s.title}</option>)}
+        </select>
+      </div>
+      <textarea required placeholder="Tell us about the event or project" rows={5} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} className="px-4 py-3 bg-card border border-input text-sm rounded-sm" />
+      {err && <p className="text-xs text-destructive">{err}</p>}
+      <button disabled={m.isPending} className="btn-primary-ivory self-start">
+        {m.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <>Send Request <ArrowRight className="w-4 h-4" /></>}
+      </button>
+    </form>
+  );
+}
+
