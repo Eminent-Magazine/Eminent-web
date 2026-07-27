@@ -21,8 +21,8 @@ export function SiteFooter() {
             <div className="flex gap-2 mt-8">
               {[
                 { icon: Instagram, href: "https://instagram.com/eminentmagazine", label: "Instagram" },
-                { icon: Facebook, href: "#", label: "Facebook" },
-                { icon: Youtube, href: "#", label: "YouTube" },
+                { icon: Facebook, href: "https://www.facebook.com/share/1B5B6WVpLR/?mibextid=wwXlfr", label: "Facebook" },
+                { icon: Youtube, href: "https://youtube.com/@eminenttv_official?si=0PdreE2WNmDNSQ3Q", label: "YouTube" },
                 { icon: Music2, href: "#", label: "TikTok" },
               ].map(({ icon: Icon, href, label }) => (
                 <a
@@ -65,8 +65,8 @@ export function SiteFooter() {
                 <span className="block text-[10px] uppercase tracking-[0.28em] text-ivory/40 mb-1">
                   Editorial
                 </span>
-                <a href="mailto:hello@eminentmagazine.com" className="hover:text-gold">
-                  hello@eminentmagazine.com
+                <a href="mailto:info@eminentmagazine.com" className="hover:text-gold">
+                  info@eminentmagazine.com
                 </a>
               </li>
               <li>
@@ -81,8 +81,8 @@ export function SiteFooter() {
                 <span className="block text-[10px] uppercase tracking-[0.28em] text-ivory/40 mb-1">
                   Phone
                 </span>
-                <a href="tel:+2348000000000" className="hover:text-gold">
-                  +234 800 000 0000
+                <a href="tel:+2347050931952" className="hover:text-gold">
+                  +234 705 093 1952
                 </a>
               </li>
             </ul>
