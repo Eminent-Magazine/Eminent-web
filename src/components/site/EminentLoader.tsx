@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import styles from '@/components/site/EminentLoader.module.css';
+import styles from '@/components/site/Eminentloader.module.css';
 //EminentLoader.module.css';
 
 const WORD = 'EMINENT';
