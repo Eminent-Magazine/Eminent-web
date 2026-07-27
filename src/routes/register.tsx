@@ -90,7 +90,7 @@ function PayFirstForm({ fee }: { fee: number }) {
 }
 
 function ProfileForm({ transactionReference }: { transactionReference?: string } = {}) {
-  const [form, setForm] = useState({ name: "", email: "", phone: "", age: "", category: "", bio: "", instagram: "", tiktok: "" });
+  const [form, setForm] = useState({ name: "", email: "", phone: "", age: "", category: "Face of Eminent", bio: "", instagram: "", tiktok: "" });
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [done, setDone] = useState<string | null>(null);
@@ -135,7 +135,7 @@ function ProfileForm({ transactionReference }: { transactionReference?: string }
         <input required placeholder="Phone" className="h-12 px-4 bg-background border border-input text-sm rounded-sm" value={form.phone} onChange={(e) => set("phone", e.target.value)} />
         <input required type="number" min={16} max={45} placeholder="Age" className="h-12 px-4 bg-background border border-input text-sm rounded-sm" value={form.age} onChange={(e) => set("age", e.target.value)} />
       </div>
-      <input required placeholder="Category (e.g. Miss, Mister, Teen)" className="w-full h-12 px-4 bg-background border border-input text-sm rounded-sm" value={form.category} onChange={(e) => set("category", e.target.value)} />
+      <input required placeholder="Category (e.g. Face of Eminent, Miss, Mister, Teen)" className="w-full h-12 px-4 bg-background border border-input text-sm rounded-sm" value={form.category} onChange={(e) => set("category", e.target.value)} />
       <textarea required rows={5} placeholder="Bio — tell us your story" className="w-full px-4 py-3 bg-background border border-input text-sm rounded-sm" value={form.bio} onChange={(e) => set("bio", e.target.value)} />
       <div className="grid grid-cols-2 gap-1 md:gap-3">
         <input placeholder="Instagram handle" className="h-12 px-4 bg-background border border-input text-sm rounded-sm" value={form.instagram} onChange={(e) => set("instagram", e.target.value)} />
