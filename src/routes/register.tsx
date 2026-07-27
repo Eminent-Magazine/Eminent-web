@@ -5,6 +5,7 @@ import { Loader2 } from "lucide-react";
 import { SiteLayout, PageHeader } from "@/components/site/SiteLayout";
 import { Public } from "@/lib/pageantApi";
 import { RegisterPageSkeleton } from "@/components/site/RegisterSkeleton";
+import EminentLoader from "@/components/site/EminentLoader";
 
 export const Route = createFileRoute("/register")({
   pendingComponent: () => <RegisterPageSkeleton />,
@@ -27,7 +28,7 @@ function RegisterPage() {
 
 
   if (settingsQ.isLoading) {
-    return <RegisterPageSkeleton />;
+    return   <EminentLoader caption={"Loading Registration Page"} variant="overlay" />
   }
 
   if (!s?.registrationEnabled) {

@@ -63,7 +63,7 @@ function AdminLayout() {
             );
           })}
         </nav>
-        <button onClick={logout} className="flex items-center gap-3 px-6 h-14 border-t border-ivory/10 text-sm text-ivory/70 hover:text-gold">
+        <button onClick={logout} className="cursor-pointer flex items-center gap-3 px-6 h-14 border-t border-ivory/10 text-sm text-ivory/70 hover:text-gold">
           <LogOut className="w-4 h-4" /> Sign out
         </button>
       </aside>
