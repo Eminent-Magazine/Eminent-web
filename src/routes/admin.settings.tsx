@@ -32,9 +32,9 @@ function SettingsPage() {
   }
 
   return (
-    <div className="p-10">
+    <div className="p-4 sm:p-6 md:p-10">
       <p className="eyebrow">System</p>
-      <h1 className="font-display text-4xl mt-2">Settings</h1>
+      <h1 className="font-display text-3xl sm:text-4xl mt-2">Settings</h1>
 
       {q.isLoading ? (
         <Loader2 className="w-6 h-6 animate-spin mt-8 text-muted-foreground" />

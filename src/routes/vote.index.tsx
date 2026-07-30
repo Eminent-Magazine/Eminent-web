@@ -5,6 +5,7 @@ import { Search, Share2, Crown, Check, Clock, Loader2 } from "lucide-react";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { Public, type Candidate, type VotePackage } from "@/lib/pageantApi";
 import pageant from "@/assets/pageant.jpg";
+import { Pagination } from "@/components/site/Pagination";
 
 export const Route = createFileRoute("/vote/")({
   head: () => ({
@@ -22,6 +23,8 @@ function VotePage() {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<string>("all");
   const [selected, setSelected] = useState<Candidate | null>(null);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(12);
 
   const candidatesQ = useQuery({
     queryKey: ["candidates", category],
@@ -40,6 +43,15 @@ function VotePage() {
     );
   }, [query, candidates]);
 
+  // Reset to page 1 when filters change
+  useMemo(() => { setPage(1); }, [query, category, pageSize]);
+
+  const total = filtered.length;
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  const safePage = Math.min(Math.max(1, page), totalPages);
+  const start = (safePage - 1) * pageSize;
+  const pageItems = filtered.slice(start, start + pageSize);
+
   const categories = useMemo(() => {
     const s = new Set<string>();
     candidates.forEach((c) => c.category && s.add(c.category));
@@ -48,7 +60,6 @@ function VotePage() {
 
   const stats = statsQ.data?.statistics;
   const leaderboard = (resultsQ.data?.results?.[0]?.candidates ?? []).slice(0, 5);
-  console.log("leaderboard statistics from stats:", stats)
 
   return (
     <SiteLayout>
@@ -135,38 +146,52 @@ function VotePage() {
             {candidates.length === 0 ? "No contestants yet — check back soon." : `No contestants match "${query}"`}
           </p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-            {filtered.map((c) => (
-              <article key={c._id} className="group bg-card border border-border hover-lift overflow-hidden">
-                <Link to="/vote/$id" params={{ id: c._id }} className="block aspect-[3/4] overflow-hidden bg-muted relative">
-                  {c.photo ? (
-                    <img src={c.photo} alt={c.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy" />
-                  ) : (
-                    <div className="w-full h-full grid place-items-center text-muted-foreground text-sm">No photo</div>
-                  )}
-                  {c.category && <div className="absolute top-3 left-3 bg-ink/80 text-ivory text-[10px] tracking-[0.2em] uppercase px-2 py-1">{c.category}</div>}
-                </Link>
-                <div className="p-4">
-                  <div className="flex items-baseline justify-between gap-2">
-                    <h3 className="font-display text-xl leading-tight truncate">{c.name}</h3>
-                    <span className="text-xs text-muted-foreground">{(c.votes ?? 0).toLocaleString()}</span>
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+              {pageItems.map((c) => (
+                <article key={c._id} className="group bg-card border border-border hover-lift overflow-hidden">
+                  <Link to="/vote/$id" params={{ id: c._id }} className="block aspect-[3/4] overflow-hidden bg-muted relative">
+                    {c.photo ? (
+                      <img src={c.photo} alt={c.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy" />
+                    ) : (
+                      <div className="w-full h-full grid place-items-center text-muted-foreground text-sm">No photo</div>
+                    )}
+                    {c.category && <div className="absolute top-3 left-3 bg-ink/80 text-ivory text-[10px] tracking-[0.2em] uppercase px-2 py-1">{c.category}</div>}
+                  </Link>
+                  <div className="p-4">
+                    <div className="flex items-baseline justify-between gap-2">
+                      <h3 className="font-display text-xl leading-tight truncate">{c.name}</h3>
+                      <span className="text-xs text-muted-foreground">{(c.votes ?? 0).toLocaleString()}</span>
+                    </div>
+                    <div className="mt-3 flex gap-2">
+                      <button onClick={() => setSelected(c)} className="flex-1 btn-primary-ivory !py-2.5 !px-3 !text-[11px]">Vote</button>
+                      <button
+                        onClick={() => navigator?.share?.({ title: `Vote for ${c.name}`, url: window.location.href }).catch(() => { })}
+                        className="w-10 h-10 grid place-items-center border border-input hover:border-primary hover:text-primary transition-colors"
+                        aria-label="Share"
+                      >
+                        <Share2 className="w-4 h-4" />
+                      </button>
+                    </div>
                   </div>
-                  <div className="mt-3 flex gap-2">
-                    <button onClick={() => setSelected(c)} className="flex-1 btn-primary-ivory !py-2.5 !px-3 !text-[11px]">Vote</button>
-                    <button
-                      onClick={() => navigator?.share?.({ title: `Vote for ${c.name}`, url: window.location.href }).catch(() => { })}
-                      className="w-10 h-10 grid place-items-center border border-input hover:border-primary hover:text-primary transition-colors"
-                      aria-label="Share"
-                    >
-                      <Share2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
+                </article>
+              ))}
+            </div>
+            <Pagination
+              page={safePage}
+              totalPages={totalPages}
+              total={total}
+              start={start}
+              end={Math.min(start + pageSize, total)}
+              pageSize={pageSize}
+              onPageChange={(p) => { setPage(p); window.scrollTo({ top: 0, behavior: "smooth" }); }}
+              onPageSizeChange={setPageSize}
+              pageSizes={[12, 24, 48, 96]}
+            />
+          </>
         )}
       </section>
+
 
       {selected && <VoteDialog contestant={selected} onClose={() => setSelected(null)} />}
     </SiteLayout>

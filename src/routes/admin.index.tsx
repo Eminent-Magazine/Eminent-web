@@ -71,13 +71,13 @@ function Dashboard() {
   ];
 
   return (
-    <div className="p-10">
+    <div className="p-4 sm:p-6 md:p-10">
       <p className="eyebrow">Overview</p>
-      <h1 className="font-display text-4xl mt-2">Dashboard</h1>
+      <h1 className="font-display text-3xl sm:text-4xl mt-2">Dashboard</h1>
       {q.isLoading ? (
         <Loader2 className="w-6 h-6 animate-spin mt-8 text-muted-foreground" />
       ) : (
-        <div className="grid grid-cols-2 md:md:grid-cols-4 auto-rows-[140px] mt-10">
+        <div className="grid grid-cols-2 md:grid-cols-4 auto-rows-[120px] sm:auto-rows-[140px] gap-2 sm:gap-3 mt-8 sm:mt-10">
           {/* {stats.map((stat, i) => (
             <StatCard
               key={stat.label}

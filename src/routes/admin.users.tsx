@@ -3,6 +3,7 @@ import { useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Loader2, Upload, Check, X } from "lucide-react";
 import { Admin, type AdminUser } from "@/lib/pageantApi";
+import { Pagination, usePagination } from "@/components/site/Pagination";
 
 export const Route = createFileRoute("/admin/users")({
   component: UsersPage,
@@ -12,6 +13,8 @@ function UsersPage() {
   const [status, setStatus] = useState("");
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<AdminUser | null>(null);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(25);
   const qc = useQueryClient();
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -25,24 +28,25 @@ function UsersPage() {
   });
 
   const users = usersQ.data ?? [];
+  const pg = usePagination(users, page, pageSize);
 
   return (
-    <div className="p-10">
-      <div className="flex items-end justify-between mb-6 gap-4 flex-wrap">
+    <div className="p-4 sm:p-6 md:p-10">
+      <div className="flex flex-col md:flex-row md:items-end md:justify-between mb-6 gap-4">
         <div>
           <p className="eyebrow">Applications</p>
-          <h1 className="font-display text-4xl mt-2">Contestant applications</h1>
+          <h1 className="font-display text-3xl sm:text-4xl mt-2">Contestant applications</h1>
         </div>
-        <div className="flex gap-2 items-center">
-          <select value={status} onChange={(e) => setStatus(e.target.value)} className="h-10 px-3 cursor-pointer border border-input bg-card text-sm">
+        <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2 items-center">
+          <select value={status} onChange={(e) => { setStatus(e.target.value); setPage(1); }} className="h-10 px-3 cursor-pointer border border-input bg-card text-sm min-w-0">
             <option value="">All statuses</option>
             <option value="pending">Pending</option>
             <option value="approved">Approved</option>
             <option value="rejected">Rejected</option>
           </select>
-          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search name/email…" className="h-10 px-3 border border-input bg-card text-sm w-56" />
+          <input value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} placeholder="Search name/email…" className="h-10 px-3 border border-input bg-card text-sm min-w-0 sm:w-56" />
           <input ref={fileRef} type="file" accept=".csv,.xlsx,.xls" hidden onChange={(e) => e.target.files?.[0] && upload.mutate(e.target.files[0])} />
-          <button onClick={() => fileRef.current?.click()} className="btn-outline-gold cursor-pointer !h-10 !px-4 !text-xs inline-flex items-center gap-2">
+          <button onClick={() => fileRef.current?.click()} className="btn-outline-gold cursor-pointer !h-10 !px-4 !text-xs inline-flex items-center justify-center gap-2 col-span-2 sm:col-span-1">
             {upload.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />} Bulk upload
           </button>
         </div>
@@ -55,7 +59,7 @@ function UsersPage() {
       )}
 
       <div className="border border-border overflow-x-auto">
-        <table className="w-full text-sm">
+        <table className="w-full text-sm min-w-[640px]">
           <thead className="bg-secondary/60">
             <tr className="text-left text-[10px] uppercase tracking-[0.24em] text-muted-foreground">
               <th className="px-4 py-3">Name</th><th className="px-4 py-3">Email</th><th className="px-4 py-3">Category</th><th className="px-4 py-3">Status</th><th className="px-4 py-3">Payment</th><th className="px-4 py-3"></th>
@@ -64,7 +68,7 @@ function UsersPage() {
           <tbody>
             {usersQ.isLoading && <tr><td colSpan={6} className="p-6 text-center"><Loader2 className="w-5 h-5 animate-spin mx-auto text-muted-foreground" /></td></tr>}
             {!usersQ.isLoading && users.length === 0 && <tr><td colSpan={6} className="p-6 text-center text-muted-foreground">No applications yet.</td></tr>}
-            {users.map((u) => {
+            {pg.pageItems.map((u) => {
               const isApproving = approve.isPending && approve.variables === u._id;
               const isRejecting = reject.isPending && reject.variables?.id === u._id;
               return (
@@ -105,6 +109,17 @@ function UsersPage() {
         </table>
       </div>
 
+      <Pagination
+        page={pg.page}
+        totalPages={pg.totalPages}
+        total={pg.total}
+        start={pg.start}
+        end={pg.end}
+        pageSize={pageSize}
+        onPageChange={setPage}
+        onPageSizeChange={(n) => { setPageSize(n); setPage(1); }}
+      />
+
       {selected && <UserDrawer user={selected} onClose={() => setSelected(null)} onDelete={(id) => { del.mutate(id); setSelected(null); }} />}
     </div>
   );
@@ -131,7 +146,7 @@ function UserDrawer({ user, onClose, onDelete }: { user: AdminUser; onClose: () 
             <p className="eyebrow">Application</p>
             <h2 className="font-display text-2xl mt-1">{user.name}</h2>
           </div>
-          <button onClick={onClose} className="w-8 h-8 grid place-items-center border border-input"><X className="w-4 h-4" /></button>
+          <button onClick={onClose} className="cursor-pointer w-8 h-8 grid place-items-center border border-input hover:border-red-800"><X className="w-4 h-4" /></button>
         </div>
         <div className="space-y-3 text-sm">
           {(["name", "email", "phone", "category", "bio"] as const).map((f) => (

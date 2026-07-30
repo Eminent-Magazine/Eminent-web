@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Loader2, X, Trash2, Search } from "lucide-react";
 import { Admin, type ContactMessage, type MessageStatus } from "@/lib/pageantApi";
+import { Pagination, usePagination } from "@/components/site/Pagination";
 
 
 export const Route = createFileRoute("/admin/messages")({
@@ -24,36 +25,39 @@ function MessagesPage() {
   const [status, setStatus] = useState<MessageStatus | "">("");
   const [search, setSearch] = useState("");
   const [openId, setOpenId] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(25);
   const q = useQuery({
     queryKey: ["admin-messages", status, search],
     queryFn: () => Admin.messages({ status: status || undefined, search: search || undefined }),
     refetchInterval: 30_000,
   });
   const msgs = unwrapMessages(q.data);
+  const pg = usePagination(msgs, page, pageSize);
 
   return (
-    <div className="p-10">
+    <div className="p-4 sm:p-6 md:p-10">
       <p className="eyebrow">Inbox</p>
-      <h1 className="font-display text-4xl mt-2">Contact messages</h1>
+      <h1 className="font-display text-3xl sm:text-4xl mt-2">Contact messages</h1>
 
-      <div className="flex flex-wrap gap-3 mt-6">
-        <div className="relative flex-1 min-w-64">
+      <div className="flex flex-col sm:flex-row flex-wrap gap-3 mt-6">
+        <div className="relative flex-1 min-w-0 sm:min-w-64">
           <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <input
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
             placeholder="Search name, email, message…"
             className="w-full h-10 pl-9 pr-3 bg-card border border-input text-sm"
           />
         </div>
-        <select value={status} onChange={(e) => setStatus(e.target.value as any)} className="h-10 px-3 bg-card border border-input text-sm">
+        <select value={status} onChange={(e) => { setStatus(e.target.value as any); setPage(1); }} className="h-10 px-3 bg-card border border-input text-sm">
           <option value="">All statuses</option>
           {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
         </select>
       </div>
 
       <div className="border border-border overflow-x-auto mt-6">
-        <table className="w-full text-sm">
+        <table className="w-full text-sm min-w-[720px]">
           <thead className="bg-secondary/60">
             <tr className="text-left text-[10px] uppercase tracking-[0.24em] text-muted-foreground">
               <th className="px-4 py-3">From</th>
@@ -66,7 +70,7 @@ function MessagesPage() {
           <tbody>
             {q.isLoading && <tr><td colSpan={5} className="p-6 text-center"><Loader2 className="w-5 h-5 animate-spin mx-auto text-muted-foreground" /></td></tr>}
             {!q.isLoading && msgs.length === 0 && <tr><td colSpan={5} className="p-6 text-center text-muted-foreground">No messages.</td></tr>}
-            {msgs.map((m) => (
+            {pg.pageItems.map((m) => (
               <tr key={m._id} className="border-t border-border hover:bg-secondary/40 cursor-pointer" onClick={() => setOpenId(m._id)}>
                 <td className="px-4 py-3">
                   <div className="font-medium">{m.name}</div>
@@ -83,6 +87,17 @@ function MessagesPage() {
           </tbody>
         </table>
       </div>
+
+      <Pagination
+        page={pg.page}
+        totalPages={pg.totalPages}
+        total={pg.total}
+        start={pg.start}
+        end={pg.end}
+        pageSize={pageSize}
+        onPageChange={setPage}
+        onPageSizeChange={(n) => { setPageSize(n); setPage(1); }}
+      />
 
       {openId && <MessageDialog id={openId} onClose={() => setOpenId(null)} />}
     </div>
@@ -102,11 +117,10 @@ function StatusBadge({ status }: { status: MessageStatus }) {
 function MessageDialog({ id, onClose }: { id: string; onClose: () => void }) {
   const qc = useQueryClient();
   const q = useQuery({ queryKey: ["admin-message", id], queryFn: () => Admin.message(id) });
-  const m: ContactMessage | undefined = (q.data as any);
-  // (q.data as any)?.message ?? (q.data as any);
+  const m: ContactMessage | undefined = (q.data as any)
+  // ?.message ?? (q.data as any);
   const [notes, setNotes] = useState("");
   const [status, setStatus] = useState<MessageStatus>("new");
-
 
   useEffect(() => {
     if (m) { setNotes(m.adminNotes ?? ""); setStatus(m.status); }
@@ -127,10 +141,10 @@ function MessageDialog({ id, onClose }: { id: string; onClose: () => void }) {
 
   return (
     <div className="fixed inset-0 z-50 bg-ink/60 backdrop-blur-sm grid place-items-center p-4" onClick={onClose}>
-      <div className="bg-background border border-border max-w-xl w-full p-6" onClick={(e) => e.stopPropagation()}>
+      <div className="bg-background border border-border max-w-xl w-full p-6 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
         <div className="flex justify-between mb-4">
           <h2 className="font-display text-2xl">Message</h2>
-          <button onClick={onClose}><X className="w-4 h-4" /></button>
+          <button onClick={onClose}><X className="cursor-pointer w-4 h-4" /></button>
         </div>
         {q.isLoading || !m ? <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" /> : (
           <div className="space-y-4 text-sm">
@@ -146,7 +160,7 @@ function MessageDialog({ id, onClose }: { id: string; onClose: () => void }) {
               <p className="eyebrow">Message</p>
               <p className="mt-1 whitespace-pre-wrap leading-relaxed bg-secondary/40 border border-border p-3">{m.message}</p>
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <p className="eyebrow mb-1">Status</p>
                 <select value={status} onChange={(e) => setStatus(e.target.value as MessageStatus)} className="w-full h-10 px-3 bg-card border border-input text-sm">

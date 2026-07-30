@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Loader2, Plus, Pencil, Trash2, TrendingUp, X } from "lucide-react";
 import { Admin, type Candidate } from "@/lib/pageantApi";
+import { Pagination, usePagination } from "@/components/site/Pagination";
 
 export const Route = createFileRoute("/admin/contestants")({
   component: ContestantsPage,
@@ -14,21 +15,24 @@ function ContestantsPage() {
   const del = useMutation({ mutationFn: (id: string) => Admin.deleteCandidate(id), onSuccess: () => qc.invalidateQueries({ queryKey: ["candidates-admin"] }) });
   const [editing, setEditing] = useState<Candidate | "new" | null>(null);
   const [voteFor, setVoteFor] = useState<Candidate | null>(null);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(25);
 
   const candidates = q.data?.candidates ?? [];
+  const pg = usePagination(candidates, page, pageSize);
 
   return (
-    <div className="p-10">
-      <div className="flex justify-between items-end mb-6">
+    <div className="p-4 sm:p-6 md:p-10">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end mb-6 gap-4">
         <div>
           <p className="eyebrow">Contestants</p>
-          <h1 className="font-display text-4xl mt-2">Active contestants</h1>
+          <h1 className="font-display text-3xl sm:text-4xl mt-2">Active contestants</h1>
         </div>
-        <button onClick={() => setEditing("new")} className="btn-primary inline-flex items-center gap-2"><Plus className="w-4 h-4" /> New contestant</button>
+        <button onClick={() => setEditing("new")} className="btn-primary inline-flex items-center justify-center gap-2 self-start sm:self-auto"><Plus className="w-4 h-4" /> New contestant</button>
       </div>
 
       <div className="border border-border overflow-x-auto">
-        <table className="w-full text-sm">
+        <table className="w-full text-sm min-w-[640px]">
           <thead className="bg-secondary/60">
             <tr className="text-left text-[10px] uppercase tracking-[0.24em] text-muted-foreground">
               <th className="px-4 py-3">Photo</th><th className="px-4 py-3">Name</th><th className="px-4 py-3">Category</th><th className="px-4 py-3">Age</th><th className="px-4 py-3">Votes</th><th className="px-4 py-3"></th>
@@ -37,7 +41,7 @@ function ContestantsPage() {
           <tbody>
             {q.isLoading && <tr><td colSpan={6} className="p-6 text-center"><Loader2 className="w-5 h-5 animate-spin mx-auto text-muted-foreground" /></td></tr>}
             {!q.isLoading && candidates.length === 0 && <tr><td colSpan={6} className="p-6 text-center text-muted-foreground">No contestants yet.</td></tr>}
-            {candidates.map((c) => (
+            {pg.pageItems.map((c) => (
               <tr key={c._id} className="border-t border-border">
                 <td className="px-4 py-2">{c.photo ? <img src={c.photo} className="w-10 h-10 object-cover rounded-full" /> : <div className="w-10 h-10 rounded-full bg-muted" />}</td>
                 <td className="px-4 py-2 font-medium">{c.name}</td>
@@ -56,6 +60,17 @@ function ContestantsPage() {
           </tbody>
         </table>
       </div>
+
+      <Pagination
+        page={pg.page}
+        totalPages={pg.totalPages}
+        total={pg.total}
+        start={pg.start}
+        end={pg.end}
+        pageSize={pageSize}
+        onPageChange={setPage}
+        onPageSizeChange={(n) => { setPageSize(n); setPage(1); }}
+      />
 
       {editing && <EditDialog value={editing === "new" ? null : editing} onClose={() => setEditing(null)} />}
       {voteFor && <AdjustVotesDialog candidate={voteFor} onClose={() => setVoteFor(null)} />}
