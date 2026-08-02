@@ -76,7 +76,7 @@ export function Skeleton({
         "bg-muted relative overflow-hidden",
         variantClass[variant],
         animationClass[animation],
-        className
+        className,
       )}
       style={{
         width,
@@ -105,32 +105,15 @@ export function SkeletonText({
   return (
     <div className={cn("flex flex-col gap-2", className)}>
       {Array.from({ length: lines }).map((_, i) => (
-        <Skeleton
-          key={i}
-          height={lineHeight}
-          width={i === lines - 1 ? lastLineWidth : "100%"}
-        />
+        <Skeleton key={i} height={lineHeight} width={i === lines - 1 ? lastLineWidth : "100%"} />
       ))}
     </div>
   );
 }
 
 /** Circular avatar placeholder. */
-export function SkeletonAvatar({
-  size = 40,
-  className,
-}: {
-  size?: number;
-  className?: string;
-}) {
-  return (
-    <Skeleton
-      variant="circular"
-      width={size}
-      height={size}
-      className={className}
-    />
-  );
+export function SkeletonAvatar({ size = 40, className }: { size?: number; className?: string }) {
+  return <Skeleton variant="circular" width={size} height={size} className={className} />;
 }
 
 /** Avatar + name/subtitle row — chat lists, comment threads, tables. */
@@ -187,12 +170,7 @@ export function SkeletonCardGrid({
   cardClassName?: string;
 }) {
   return (
-    <div
-      className={cn(
-        "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4",
-        className
-      )}
-    >
+    <div className={cn("grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4", className)}>
       {Array.from({ length: count }).map((_, i) => (
         <SkeletonCard key={i} className={cardClassName} />
       ))}
@@ -206,7 +184,7 @@ export function SkeletonListItem({ className }: { className?: string }) {
     <div
       className={cn(
         "flex items-center justify-between gap-3 py-3 border-b border-border last:border-none",
-        className
+        className,
       )}
     >
       <SkeletonAvatarText />
@@ -216,13 +194,7 @@ export function SkeletonListItem({ className }: { className?: string }) {
 }
 
 /** Vertical list of SkeletonListItems. */
-export function SkeletonList({
-  items = 5,
-  className,
-}: {
-  items?: number;
-  className?: string;
-}) {
+export function SkeletonList({ items = 5, className }: { items?: number; className?: string }) {
   return (
     <div className={className}>
       {Array.from({ length: items }).map((_, i) => (
@@ -347,3 +319,75 @@ export const Route = createFileRoute("/properties")({
 // <Skeleton variant="rounded" width="100%" height={240} />
 // ------------------------------------------------------------------
 */
+
+// --- Table row skeleton ------------------------------------------------
+
+/**
+ * A single shimmer <tr> whose cells are defined by a `cols` array.
+ * Each entry describes one <td>:
+ *   - widths: one or two widths (two = stacked name+subtitle pattern)
+ *   - avatar: render a circular blob before the text widths
+ *   - square: render a fixed square blob (e.g. action buttons)
+ */
+export type SkeletonColDef =
+  | { type: "text"; widths: string[] }
+  | { type: "avatar-text"; widths: string[] }
+  | { type: "badge" }
+  | { type: "square" }
+  | { type: "avatar" };
+
+export function TableRowSkeleton({
+  cols,
+  rowClassName = "border-t border-border",
+}: {
+  cols: SkeletonColDef[];
+  rowClassName?: string;
+}) {
+  return (
+    <tr className={rowClassName}>
+      {cols.map((col, i) => (
+        <td key={i} className="px-4 py-3">
+          {col.type === "avatar" && <Skeleton variant="circular" width={40} height={40} />}
+          {col.type === "avatar-text" && (
+            <div className="flex items-center gap-3">
+              <Skeleton variant="circular" width={40} height={40} className="shrink-0" />
+              <div className="flex flex-col gap-1.5 flex-1">
+                {col.widths.map((w, j) => (
+                  <Skeleton key={j} height={j === 0 ? "0.875rem" : "0.75rem"} width={w} />
+                ))}
+              </div>
+            </div>
+          )}
+          {col.type === "text" && (
+            <div className="flex flex-col gap-1.5">
+              {col.widths.map((w, j) => (
+                <Skeleton key={j} height={j === 0 ? "0.875rem" : "0.75rem"} width={w} />
+              ))}
+            </div>
+          )}
+          {col.type === "badge" && <Skeleton height="1.25rem" width="4rem" variant="rectangular" />}
+          {col.type === "square" && (
+            <div className="flex justify-end gap-1">
+              <Skeleton variant="rectangular" width={32} height={32} />
+              <Skeleton variant="rectangular" width={32} height={32} />
+            </div>
+          )}
+        </td>
+      ))}
+    </tr>
+  );
+}
+
+/**
+ * Renders `count` skeleton rows for a given column definition.
+ * Drop this directly inside a <tbody> in place of the spinner <tr>.
+ */
+export function TableBodySkeleton({ cols, rows = 10 }: { cols: SkeletonColDef[]; rows?: number }) {
+  return (
+    <>
+      {Array.from({ length: rows }).map((_, i) => (
+        <TableRowSkeleton key={i} cols={cols} />
+      ))}
+    </>
+  );
+}

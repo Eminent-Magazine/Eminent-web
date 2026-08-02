@@ -25,6 +25,8 @@ interface PaginationProps {
   start: number;
   end: number;
   pageSize: number;
+  hasNextPage?: boolean;
+  hasPrevPage?: boolean;
   onPageChange: (p: number) => void;
   onPageSizeChange?: (n: number) => void;
   pageSizes?: number[];
@@ -37,16 +39,30 @@ export function Pagination({
   start,
   end,
   pageSize,
+  hasNextPage,
+  hasPrevPage,
   onPageChange,
   onPageSizeChange,
   pageSizes = [10, 25, 50, 100],
 }: PaginationProps) {
-  if (total === 0) return null;
+  // Fall back to page-number comparison when server flags aren't provided
+  const canGoPrev = hasPrevPage !== undefined ? hasPrevPage : page > 1;
+  const canGoNext = hasNextPage !== undefined ? hasNextPage : page < totalPages;
+
   return (
     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mt-4 text-xs text-muted-foreground">
       <p className="tabular-nums">
-        Showing <span className="text-foreground">{start + 1}–{end}</span> of{" "}
-        <span className="text-foreground">{total.toLocaleString()}</span>
+        {total > 0 ? (
+          <>
+            Showing{" "}
+            <span className="text-foreground">
+              {start + 1}–{end}
+            </span>{" "}
+            of <span className="text-foreground">{total.toLocaleString()}</span>
+          </>
+        ) : (
+          <span>No results</span>
+        )}
       </p>
       <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
         {onPageSizeChange && (
@@ -57,13 +73,15 @@ export function Pagination({
             aria-label="Rows per page"
           >
             {pageSizes.map((n) => (
-              <option key={n} value={n}>{n} / page</option>
+              <option key={n} value={n}>
+                {n} / page
+              </option>
             ))}
           </select>
         )}
         <div className="flex items-center gap-1">
           <button
-            disabled={page <= 1}
+            disabled={!canGoPrev}
             onClick={() => onPageChange(page - 1)}
             className="w-8 h-8 grid place-items-center border border-input disabled:opacity-40 disabled:cursor-not-allowed hover:border-primary hover:text-primary cursor-pointer"
             aria-label="Previous page"
@@ -74,7 +92,7 @@ export function Pagination({
             {page} / {totalPages}
           </span>
           <button
-            disabled={page >= totalPages}
+            disabled={!canGoNext}
             onClick={() => onPageChange(page + 1)}
             className="w-8 h-8 grid place-items-center border border-input disabled:opacity-40 disabled:cursor-not-allowed hover:border-primary hover:text-primary cursor-pointer"
             aria-label="Next page"

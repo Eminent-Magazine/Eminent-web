@@ -120,7 +120,7 @@ function ProfileForm({ transactionReference }: { transactionReference?: string }
     return (
       <div className="bg-card border border-border p-10 text-center">
         <h2 className="font-display text-3xl">Application submitted</h2>
-        <p className="mt-3 text-sm text-muted-foreground">We'll review and get back to you within 3 business days.</p>
+        <p className="mt-3 text-sm text-muted-foreground">We'll review and get back to you soon.</p>
         <Link to="/" className="btn-primary-ivory mt-6 inline-flex">Back to home</Link>
       </div>
     );

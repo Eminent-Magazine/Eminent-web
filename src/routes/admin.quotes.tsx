@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Loader2, X, Trash2 } from "lucide-react";
 import { Admin, type QuoteRequest, type QuoteStatus, type QuoteService } from "@/lib/pageantApi";
-import { Pagination, usePagination } from "@/components/site/Pagination";
-
+import { Pagination } from "@/components/site/Pagination";
+import { TableBodySkeleton, type SkeletonColDef } from "@/components/site/Skeleton";
 
 export const Route = createFileRoute("/admin/quotes")({
   component: QuotesPage,
@@ -20,28 +20,42 @@ const SERVICES: QuoteService[] = [
   "Ushering & Talent",
 ];
 
-function unwrap(d: any): QuoteRequest[] {
-  if (!d) return [];
-  if (Array.isArray(d)) return d;
-  if (Array.isArray(d.quotes)) return d.quotes;
-  if (Array.isArray(d.data)) return d.data;
-  if (Array.isArray(d.data?.quotes)) return d.data.quotes;
-  return [];
-}
+const SKELETON_COLS: SkeletonColDef[] = [
+  { type: "text", widths: ["55%", "70%"] }, // name + email stacked
+  { type: "text", widths: ["70%"] }, // service
+  { type: "text", widths: ["50%"] }, // phone
+  { type: "text", widths: ["85%"] }, // preview (wide)
+  { type: "badge" }, // status
+  { type: "text", widths: ["65%"] }, // date
+];
 
 function QuotesPage() {
   const [status, setStatus] = useState<QuoteStatus | "">("");
   const [service, setService] = useState<string>("");
   const [openId, setOpenId] = useState<string | null>(null);
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(25);
+  const [pageSize, setPageSize] = useState(10);
+
   const q = useQuery({
-    queryKey: ["admin-quotes", status, service],
-    queryFn: () => Admin.quotes({ status: status || undefined, service: service || undefined }),
+    queryKey: ["admin-quotes", status, service, page, pageSize],
+    queryFn: () =>
+      Admin.quotes({
+        status: status || undefined,
+        service: service || undefined,
+        page,
+        limit: pageSize,
+      }),
     refetchInterval: 30_000,
   });
-  const rows = unwrap(q.data);
-  const pg = usePagination(rows, page, pageSize);
+
+  const rows: QuoteRequest[] = q.data?.data ?? [];
+  const pagination = q.data?.pagination;
+  const total = pagination?.totalItems ?? 0;
+  const totalPages = pagination?.totalPages ?? 1;
+  const hasNextPage = pagination?.hasNextPage;
+  const hasPrevPage = pagination?.hasPrevPage;
+  const start = (page - 1) * pageSize;
+  const end = Math.min(start + pageSize, total);
 
   return (
     <div className="p-4 sm:p-6 md:p-10">
@@ -49,13 +63,35 @@ function QuotesPage() {
       <h1 className="font-display text-3xl sm:text-4xl mt-2">Quote requests</h1>
 
       <div className="grid grid-cols-1 sm:flex sm:flex-wrap gap-3 mt-6">
-        <select value={status} onChange={(e) => { setStatus(e.target.value as any); setPage(1); }} className="h-10 px-3 bg-card border border-input text-sm">
+        <select
+          value={status}
+          onChange={(e) => {
+            setStatus(e.target.value as any);
+            setPage(1);
+          }}
+          className="h-10 px-3 bg-card border border-input text-sm"
+        >
           <option value="">All statuses</option>
-          {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
+          {STATUSES.map((s) => (
+            <option key={s} value={s}>
+              {s}
+            </option>
+          ))}
         </select>
-        <select value={service} onChange={(e) => { setService(e.target.value); setPage(1); }} className="h-10 px-3 bg-card border border-input text-sm">
+        <select
+          value={service}
+          onChange={(e) => {
+            setService(e.target.value);
+            setPage(1);
+          }}
+          className="h-10 px-3 bg-card border border-input text-sm"
+        >
           <option value="">All services</option>
-          {SERVICES.map((s) => <option key={s} value={s}>{s}</option>)}
+          {SERVICES.map((s) => (
+            <option key={s} value={s}>
+              {s}
+            </option>
+          ))}
         </select>
       </div>
 
@@ -72,10 +108,20 @@ function QuotesPage() {
             </tr>
           </thead>
           <tbody>
-            {q.isLoading && <tr><td colSpan={6} className="p-6 text-center"><Loader2 className="w-5 h-5 animate-spin mx-auto text-muted-foreground" /></td></tr>}
-            {!q.isLoading && rows.length === 0 && <tr><td colSpan={6} className="p-6 text-center text-muted-foreground">No quote requests.</td></tr>}
-            {pg.pageItems.map((r) => (
-              <tr key={r._id} className="border-t border-border hover:bg-secondary/40 cursor-pointer" onClick={() => setOpenId(r._id)}>
+            {q.isLoading && <TableBodySkeleton cols={SKELETON_COLS} rows={pageSize} />}
+            {!q.isLoading && rows.length === 0 && (
+              <tr>
+                <td colSpan={6} className="p-6 text-center text-muted-foreground">
+                  No quote requests.
+                </td>
+              </tr>
+            )}
+            {rows.map((r) => (
+              <tr
+                key={r._id}
+                className="border-t border-border hover:bg-secondary/40 cursor-pointer"
+                onClick={() => setOpenId(r._id)}
+              >
                 <td className="px-4 py-3">
                   <div className="font-medium">{r.name}</div>
                   <div className="text-xs text-muted-foreground">{r.email}</div>
@@ -83,8 +129,12 @@ function QuotesPage() {
                 <td className="px-4 py-3 text-xs uppercase tracking-widest">{r.service}</td>
                 <td className="px-4 py-3 text-xs">{r.phone}</td>
                 <td className="px-4 py-3 text-muted-foreground max-w-sm truncate">{r.message}</td>
-                <td className="px-4 py-3"><StatusBadge status={r.status} /></td>
-                <td className="px-4 py-3 text-xs text-muted-foreground">{r.createdAt ? new Date(r.createdAt).toLocaleString() : ""}</td>
+                <td className="px-4 py-3">
+                  <StatusBadge status={r.status} />
+                </td>
+                <td className="px-4 py-3 text-xs text-muted-foreground">
+                  {r.createdAt ? new Date(r.createdAt).toLocaleString() : ""}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -92,14 +142,19 @@ function QuotesPage() {
       </div>
 
       <Pagination
-        page={pg.page}
-        totalPages={pg.totalPages}
-        total={pg.total}
-        start={pg.start}
-        end={pg.end}
+        page={page}
+        totalPages={totalPages}
+        total={total}
+        start={start}
+        end={end}
         pageSize={pageSize}
+        hasNextPage={hasNextPage}
+        hasPrevPage={hasPrevPage}
         onPageChange={setPage}
-        onPageSizeChange={(n) => { setPageSize(n); setPage(1); }}
+        onPageSizeChange={(n) => {
+          setPageSize(n);
+          setPage(1);
+        }}
       />
 
       {openId && <QuoteDialog id={openId} onClose={() => setOpenId(null)} />}
@@ -114,7 +169,11 @@ function StatusBadge({ status }: { status: QuoteStatus }) {
     quoted: "bg-emerald-500/15 text-emerald-500",
     archived: "bg-secondary text-muted-foreground",
   };
-  return <span className={`text-[10px] uppercase tracking-widest px-2 py-1 ${cls[status]}`}>{status}</span>;
+  return (
+    <span className={`text-[10px] uppercase tracking-widest px-2 py-1 ${cls[status]}`}>
+      {status}
+    </span>
+  );
 }
 
 function QuoteDialog({ id, onClose }: { id: string; onClose: () => void }) {
@@ -125,9 +184,11 @@ function QuoteDialog({ id, onClose }: { id: string; onClose: () => void }) {
   const [status, setStatus] = useState<QuoteStatus>("new");
 
   useEffect(() => {
-    if (r) { setNotes(r.adminNotes ?? ""); setStatus(r.status); }
+    if (r) {
+      setNotes(r.adminNotes ?? "");
+      setStatus(r.status);
+    }
   }, [r?._id]);
-
 
   const save = useMutation({
     mutationFn: () => Admin.updateQuote(id, { status, adminNotes: notes }),
@@ -138,21 +199,39 @@ function QuoteDialog({ id, onClose }: { id: string; onClose: () => void }) {
   });
   const del = useMutation({
     mutationFn: () => Admin.deleteQuote(id),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-quotes"] }); onClose(); },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["admin-quotes"] });
+      onClose();
+    },
   });
 
   return (
-    <div className="fixed inset-0 z-50 bg-ink/60 backdrop-blur-sm grid place-items-center p-4" onClick={onClose}>
-      <div className="bg-background border border-border max-w-xl w-full p-6 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+    <div
+      className="fixed inset-0 z-50 bg-ink/60 backdrop-blur-sm grid place-items-center p-4"
+      onClick={onClose}
+    >
+      <div
+        className="bg-background border border-border max-w-xl w-full p-6 max-h-[90vh] overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="flex justify-between mb-4">
           <h2 className="font-display text-2xl">Quote request</h2>
-          <button onClick={onClose}><X className="w-4 h-4" /></button>
+          <button onClick={onClose}>
+            <X className="w-4 h-4" />
+          </button>
         </div>
-        {q.isLoading || !r ? <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" /> : (
+        {q.isLoading || !r ? (
+          <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+        ) : (
           <div className="space-y-4 text-sm">
             <div>
               <p className="eyebrow">From</p>
-              <p className="mt-1 font-medium">{r.name} <span className="text-muted-foreground">· {r.email} · {r.phone}</span></p>
+              <p className="mt-1 font-medium">
+                {r.name}{" "}
+                <span className="text-muted-foreground">
+                  · {r.email} · {r.phone}
+                </span>
+              </p>
             </div>
             <div>
               <p className="eyebrow">Service</p>
@@ -160,27 +239,55 @@ function QuoteDialog({ id, onClose }: { id: string; onClose: () => void }) {
             </div>
             <div>
               <p className="eyebrow">Message</p>
-              <p className="mt-1 whitespace-pre-wrap leading-relaxed bg-secondary/40 border border-border p-3">{r.message}</p>
+              <p className="mt-1 whitespace-pre-wrap leading-relaxed bg-secondary/40 border border-border p-3">
+                {r.message}
+              </p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <p className="eyebrow mb-1">Status</p>
-                <select value={status} onChange={(e) => setStatus(e.target.value as QuoteStatus)} className="w-full h-10 px-3 bg-card border border-input text-sm">
-                  {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
+                <select
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value as QuoteStatus)}
+                  className="w-full h-10 px-3 bg-card border border-input text-sm"
+                >
+                  {STATUSES.map((s) => (
+                    <option key={s} value={s}>
+                      {s}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div className="flex items-end justify-end gap-2">
-                <button onClick={() => del.mutate()} className="h-10 px-3 border border-destructive/40 text-destructive text-xs uppercase tracking-widest inline-flex items-center gap-2 hover:bg-destructive/10">
-                  {del.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Trash2 className="w-4 h-4" /> Delete</>}
+                <button
+                  onClick={() => del.mutate()}
+                  className="h-10 px-3 border border-destructive/40 text-destructive text-xs uppercase tracking-widest inline-flex items-center gap-2 hover:bg-destructive/10"
+                >
+                  {del.isPending ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <>
+                      <Trash2 className="w-4 h-4" /> Delete
+                    </>
+                  )}
                 </button>
               </div>
             </div>
             <div>
               <p className="eyebrow mb-1">Admin notes</p>
-              <textarea rows={4} value={notes} onChange={(e) => setNotes(e.target.value)} className="w-full px-3 py-2 bg-card border border-input text-sm" />
+              <textarea
+                rows={4}
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                className="w-full px-3 py-2 bg-card border border-input text-sm"
+              />
             </div>
             <div className="flex justify-end">
-              <button onClick={() => save.mutate()} disabled={save.isPending} className="btn-primary-ivory">
+              <button
+                onClick={() => save.mutate()}
+                disabled={save.isPending}
+                className="btn-primary-ivory"
+              >
                 {save.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Save changes"}
               </button>
             </div>

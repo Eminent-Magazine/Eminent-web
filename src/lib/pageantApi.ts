@@ -15,15 +15,22 @@ export function clearAdminToken() {
   window.localStorage.removeItem(TOKEN_KEY);
 }
 
-type Opts = { method?: string; body?: unknown; query?: Record<string, string | number | undefined>; form?: FormData };
+type Opts = {
+  method?: string;
+  body?: unknown;
+  query?: Record<string, string | number | undefined>;
+  form?: FormData;
+  /** Skip the automatic `data.data` unwrap — use for paginated responses that need the full envelope */
+  raw?: boolean;
+};
 
 export async function api<T = any>(path: string, opts: Opts = {}): Promise<T> {
   const qs = opts.query
     ? "?" +
-    Object.entries(opts.query)
-      .filter(([, v]) => v !== undefined && v !== "")
-      .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(String(v))}`)
-      .join("&")
+      Object.entries(opts.query)
+        .filter(([, v]) => v !== undefined && v !== "")
+        .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(String(v))}`)
+        .join("&")
     : "";
   const headers: Record<string, string> = { Accept: "application/json" };
   const token = getAdminToken();
@@ -37,16 +44,22 @@ export async function api<T = any>(path: string, opts: Opts = {}): Promise<T> {
     body = JSON.stringify(opts.body);
   }
 
-  const res = await fetch(`${BASE}${path}${qs}`, { method: opts.method ?? (body ? "POST" : "GET"), headers, body });
+  const res = await fetch(`${BASE}${path}${qs}`, {
+    method: opts.method ?? (body ? "POST" : "GET"),
+    headers,
+    body,
+  });
   const ct = res.headers.get("content-type") ?? "";
   const data = ct.includes("application/json") ? await res.json() : await res.text();
   if (!res.ok) {
     if (res.status === 401) clearAdminToken();
-    const msg = (data && typeof data === "object" && (data.message || data.error)) || `Request failed (${res.status})`;
+    const msg =
+      (data && typeof data === "object" && (data.message || data.error)) ||
+      `Request failed (${res.status})`;
     throw new Error(String(msg));
   }
   // return data as T;
-  return (data && typeof data === "object" && "data" in data ? data.data : data) as T;
+  return (data && typeof data === "object" && !opts.raw && "data" in data ? data.data : data) as T;
 }
 
 // ---------- Types ----------
@@ -100,7 +113,7 @@ export type AdminUser = {
   registeredAt: string; // ISO date string
   __v: number;
   socialMedia: SocialMedia;
-}
+};
 
 // export type AdminUser = {
 //   _id: string;
@@ -130,6 +143,16 @@ export type Transaction = {
   createdAt?: string;
 };
 
+// ---------- Pagination ----------
+export type PaginationMeta = {
+  totalItems: number;
+  page: number;
+  totalPages: number;
+  limit: number;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
+};
+
 // ---------- Results ----------
 export type ResultCandidate = {
   name: string;
@@ -140,6 +163,14 @@ export type ResultCandidate = {
   candidateId: string;
   rank: number;
   isWinner: boolean;
+};
+
+export type PaginatedResponse<T, K extends string = "data"> = {
+  count: number;
+  pagination: PaginationMeta;
+  success: boolean;
+} & {
+  [key in K]: T;
 };
 
 export type CategoryResult = {
@@ -154,26 +185,66 @@ export type ResultsResponse = {
 
 // ---------- Public ----------
 export const Public = {
-  candidates: () => api<{ candidates: Candidate[] }>("/candidates"),
-  candidatesByCategory: (category: string) => api<{ candidates: Candidate[] }>(`/candidates/category/${encodeURIComponent(category)}`),
+  candidates: (q: { page?: number; limit?: number } = {}) =>
+    api<PaginatedResponse<Candidate[], "candidates">>("/candidates", {
+      query: q as any,
+      raw: true,
+    }),
+  candidatesByCategory: (category: string, q: { page?: number; limit?: number } = {}) =>
+    api<PaginatedResponse<Candidate[], "candidates">>(
+      `/candidates/category/${encodeURIComponent(category)}`,
+      { query: q as any, raw: true },
+    ),
   candidate: (id: string) => api<{ candidate: Candidate }>(`/candidates/${id}`),
   results: () => api<ResultsResponse>("/votes/results"),
   statistics: () => api<{ statistics: any }>("/votes/statistics"),
   packages: () => api<{ packages: VotePackage[] }>("/payments/packages"),
-  initVote: (body: { fullName: string; email: string; phone: string; candidateId: string; numberOfVotes: number; paymentMethod: string }) =>
-    api<{ data: { authorization_url: string; reference: string } }>("/payments/initialize", { body }),
-  verifyVote: (reference: string) => api<{ data: any }>("/payments/verify", { query: { reference } }),
+  initVote: (body: {
+    fullName: string;
+    email: string;
+    phone: string;
+    candidateId: string;
+    numberOfVotes: number;
+    paymentMethod: string;
+  }) =>
+    api<{ data: { authorization_url: string; reference: string } }>("/payments/initialize", {
+      body,
+    }),
+  verifyVote: (reference: string) =>
+    api<{ data: any }>("/payments/verify", { query: { reference } }),
   registrationSettings: () => api<RegistrationSettings>("/users/registration/settings"),
-  initRegistration: (body: { fullName: string; email: string; phone: string; paymentMethod: string }) =>
-    api<{ data: { authorization_url: string; reference: string } }>("/payments/registration/initialize", { body }),
-  verifyRegistration: (reference: string) => api<{ data: any }>("/payments/registration/verify", { query: { reference } }),
-  register: (body: { name: string; email: string; phone: string; age: number; category: string; bio: string; socialMedia?: any; transactionReference?: string }) =>
-    api<{ user: AdminUser }>("/users/register", { body }),
+  initRegistration: (body: {
+    fullName: string;
+    email: string;
+    phone: string;
+    paymentMethod: string;
+  }) =>
+    api<{ data: { authorization_url: string; reference: string } }>(
+      "/payments/registration/initialize",
+      { body },
+    ),
+  verifyRegistration: (reference: string) =>
+    api<{ data: any }>("/payments/registration/verify", { query: { reference } }),
+  register: (body: {
+    name: string;
+    email: string;
+    phone: string;
+    age: number;
+    category: string;
+    bio: string;
+    socialMedia?: any;
+    transactionReference?: string;
+  }) => api<{ user: AdminUser }>("/users/register", { body }),
   user: (id: string) => api<{ user: AdminUser }>(`/users/${id}`),
   contact: (body: { name: string; email: string; subject: ContactSubject; message: string }) =>
     api<{ success: boolean; message: string }>("/users/contact", { body }),
-  quote: (body: { name: string; email: string; phone: string; service: QuoteService; message: string }) =>
-    api<{ success: boolean; message: string }>("/users/quote", { body }),
+  quote: (body: {
+    name: string;
+    email: string;
+    phone: string;
+    service: QuoteService;
+    message: string;
+  }) => api<{ success: boolean; message: string }>("/users/quote", { body }),
 };
 
 export type ContactSubject =
@@ -206,7 +277,7 @@ export type ContactMessage = {
   createdAt: string; // ISO 8601 date string
   updatedAt: string; // ISO 8601 date string
   __v: number; // present once status moves past "new"
-  readAt?: string | null; 
+  readAt?: string | null;
 };
 
 export type QuoteRequest = {
@@ -224,46 +295,86 @@ export type QuoteRequest = {
 
 // ---------- Admin ----------
 export const Admin = {
-  login: (email: string, password: string) => api<{ token: string; admin?: any }>("/admin/login", { body: { email, password } }),
+  login: (email: string, password: string) =>
+    api<{ token: string; admin?: any }>("/admin/login", { body: { email, password } }),
   stats: () => api<{ users: any; votes: any; revenue: any; topCandidates: any[] }>("/admin/stats"),
   getSettings: () => api<{ settings: any }>("/admin/settings"),
-  updateSettings: (settings: any) => api<{ settings: any }>("/admin/settings", { method: "PUT", body: settings }),
-  users: (q: { status?: string; paymentStatus?: string; category?: string; search?: string } = {}) =>
-    api<AdminUser[]>("/admin/users", { query: q }),
+  updateSettings: (settings: any) =>
+    api<{ settings: any }>("/admin/settings", { method: "PUT", body: settings }),
+  users: (
+    q: {
+      status?: string;
+      paymentStatus?: string;
+      category?: string;
+      search?: string;
+      page?: number;
+      limit?: number;
+    } = {},
+  ) => api<PaginatedResponse<AdminUser[]>>("/admin/users", { query: q as any, raw: true }),
   user: (id: string) => api<{ user: AdminUser }>(`/admin/users/${id}`),
-  updateUser: (id: string, body: any) => api<{ user: AdminUser }>(`/admin/users/${id}`, { method: "PUT", body }),
+  updateUser: (id: string, body: any) =>
+    api<{ user: AdminUser }>(`/admin/users/${id}`, { method: "PUT", body }),
   deleteUser: (id: string) => api<{ success: boolean }>(`/admin/users/${id}`, { method: "DELETE" }),
-  approveUser: (id: string) => api<{ user: AdminUser }>(`/admin/users/${id}/approve`, { method: "POST", body: {} }),
-  rejectUser: (id: string, adminNotes: string) => api<{ user: AdminUser }>(`/admin/users/${id}/reject`, { method: "POST", body: { adminNotes } }),
+  approveUser: (id: string) =>
+    api<{ user: AdminUser }>(`/admin/users/${id}/approve`, { method: "POST", body: {} }),
+  rejectUser: (id: string, adminNotes: string) =>
+    api<{ user: AdminUser }>(`/admin/users/${id}/reject`, { method: "POST", body: { adminNotes } }),
   bulkUpload: (file: File) => {
     const fd = new FormData();
     fd.append("file", file);
-    return api<{ success: boolean; imported?: number; errors?: any[] }>("/admin/users/bulk-upload", { method: "POST", form: fd });
+    return api<{ success: boolean; imported?: number; errors?: any[] }>(
+      "/admin/users/bulk-upload",
+      { method: "POST", form: fd },
+    );
   },
   addVotes: (candidateId: string, votes: number, reason: string) =>
     api<{ candidate: Candidate }>("/admin/votes/add", { body: { candidateId, votes, reason } }),
-  transactions: () => api<{ transactions: Transaction[] }>("/payments/transactions"),
-  transaction: (reference: string) => api<{ transaction: Transaction }>(`/payments/transaction/${encodeURIComponent(reference)}`),
-  candidates: () => Public.candidates(),
-  createCandidate: (body: { name: string; age: number; photo: string; bio: string; category: string }) =>
-    api<{ candidate: Candidate }>("/candidates", { body }),
-  updateCandidate: (id: string, body: any) => api<{ candidate: Candidate }>(`/candidates/${id}`, { method: "PUT", body }),
-  deleteCandidate: (id: string) => api<{ success: boolean }>(`/candidates/${id}`, { method: "DELETE" }),
+  transactions: (q: { page?: number; limit?: number } = {}) =>
+    api<PaginatedResponse<Transaction[], "transactions">>("/payments/transactions", {
+      query: q as any,
+      raw: true,
+    }),
+  transaction: (reference: string) =>
+    api<{ transaction: Transaction }>(`/payments/transaction/${encodeURIComponent(reference)}`),
+  candidates: (q: { page?: number; limit?: number } = {}) =>
+    api<PaginatedResponse<Candidate[], "candidates">>("/candidates", {
+      query: q as any,
+      raw: true,
+    }),
+  createCandidate: (body: {
+    name: string;
+    age: number;
+    photo: string;
+    bio: string;
+    category: string;
+  }) => api<{ candidate: Candidate }>("/candidates", { body }),
+  updateCandidate: (id: string, body: any) =>
+    api<{ candidate: Candidate }>(`/candidates/${id}`, { method: "PUT", body }),
+  deleteCandidate: (id: string) =>
+    api<{ success: boolean }>(`/candidates/${id}`, { method: "DELETE" }),
 
   // Contact messages
-  messages: (q: { status?: MessageStatus; subject?: string; search?: string } = {}) =>
-    api<{ messages: ContactMessage[] }>("/admin/messages", { query: q as any }),
+  messages: (
+    q: {
+      status?: MessageStatus;
+      subject?: string;
+      search?: string;
+      page?: number;
+      limit?: number;
+    } = {},
+  ) => api<PaginatedResponse<ContactMessage[]>>("/admin/messages", { query: q as any, raw: true }),
   message: (id: string) => api<{ message: ContactMessage }>(`/admin/messages/${id}`),
   updateMessage: (id: string, body: { status?: MessageStatus; adminNotes?: string }) =>
     api<{ message: ContactMessage }>(`/admin/messages/${id}`, { method: "PUT", body }),
-  deleteMessage: (id: string) => api<{ success: boolean }>(`/admin/messages/${id}`, { method: "DELETE" }),
+  deleteMessage: (id: string) =>
+    api<{ success: boolean }>(`/admin/messages/${id}`, { method: "DELETE" }),
 
   // Quote requests
-  quotes: (q: { status?: QuoteStatus; service?: string } = {}) =>
-    api<{ quotes: QuoteRequest[] }>("/admin/quotes", { query: q as any }),
+  quotes: (q: { status?: QuoteStatus; service?: string; page?: number; limit?: number } = {}) =>
+    api<PaginatedResponse<QuoteRequest[]>>("/admin/quotes", { query: q as any, raw: true }),
   quote: (id: string) => api<{ quote: QuoteRequest }>(`/admin/quotes/${id}`),
   updateQuote: (id: string, body: { status?: QuoteStatus; adminNotes?: string }) =>
     api<{ quote: QuoteRequest }>(`/admin/quotes/${id}`, { method: "PUT", body }),
-  deleteQuote: (id: string) => api<{ success: boolean }>(`/admin/quotes/${id}`, { method: "DELETE" }),
+  deleteQuote: (id: string) =>
+    api<{ success: boolean }>(`/admin/quotes/${id}`, { method: "DELETE" }),
 };
-

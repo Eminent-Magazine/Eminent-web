@@ -17,6 +17,7 @@ function TermsPage() {
   return (
     <SiteLayout>
       <PageHeader
+        canGoBack={true}
         eyebrow="Legal"
         title="Terms & Conditions"
         subtitle="Effective 1st August, 2025 · Last updated 31st July, 2025"
