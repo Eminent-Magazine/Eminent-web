@@ -207,7 +207,7 @@ export const Public = {
     numberOfVotes: number;
     paymentMethod: string;
   }) =>
-    api<{ data: { paymentLink: string; reference: string } }>("/payments/initialize", {
+    api<{ paymentLink: string; reference: string }>("/payments/initialize", {
       body,
     }),
   verifyVote: (reference: string) =>

@@ -360,7 +360,7 @@ export function VoteDialog({
         numberOfVotes: active.numberOfVotes,
         paymentMethod: method,
       });
-      const url = res?.data?.paymentLink;
+      const url = res?.paymentLink;
       if (!url) throw new Error("No payment URL returned");
       window.location.href = url;
     } catch (e: any) {
