@@ -69,24 +69,24 @@ function TxPage() {
             )}
             {txs.map((t) => (
               <tr
-                key={t.reference}
+                key={t.paymentReference}
                 className="border-t border-border hover:bg-secondary/40 cursor-pointer"
-                onClick={() => setRef(t.reference)}
+                onClick={() => setRef(t.paymentReference)}
               >
-                <td className="px-4 py-2 font-mono text-xs">{t.reference}</td>
+                <td className="px-4 py-2 font-mono text-xs">{t.paymentReference}</td>
                 <td className="px-4 py-2">
                   {t.fullName ?? "—"}
                   <br />
                   <span className="text-xs text-muted-foreground">{t.email}</span>
                 </td>
-                <td className="px-4 py-2 text-xs uppercase tracking-widest">{t.type ?? "vote"}</td>
+                <td className="px-4 py-2 text-xs uppercase tracking-widest">{t.purpose ?? "vote"}</td>
                 <td className="px-4 py-2 tabular-nums">₦{(t.amount ?? 0).toLocaleString()}</td>
                 <td className="px-4 py-2 tabular-nums">{t.numberOfVotes ?? "—"}</td>
                 <td className="px-4 py-2">
                   <span
-                    className={`text-[10px] uppercase tracking-widest px-2 py-1 ${t.status === "success" ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground"}`}
+                    className={`text-[10px] uppercase tracking-widest px-2 py-1 ${t.paymentStatus === "successful" ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground"}`}
                   >
-                    {t.status}
+                    {t.paymentStatus}
                   </span>
                 </td>
                 <td className="px-4 py-2 text-xs text-muted-foreground">

@@ -131,17 +131,50 @@ export type AdminUser = {
 
 export type Transaction = {
   _id?: string;
-  reference: string;
+  paymentReference: string;
   email?: string;
   fullName?: string;
   phone?: string;
   amount?: number;
   numberOfVotes?: number;
-  status?: string;
+  paymentStatus?: string;
   candidateId?: string | { _id: string; name: string };
   type?: string;
   createdAt?: string;
 };
+
+interface VoteCandidate {
+  _id: string;
+  name: string;
+  photo: string;
+  category: string;
+}
+
+interface VoteTransactionMetadata {
+  adminId: string;
+  reason: string;
+  type: string;
+}
+
+interface VoteTransaction {
+  _id: string;
+  userId: string | null;
+  fullName: string;
+  email: string;
+  phone: string;
+  purpose: string;
+  candidateId: Candidate;
+  numberOfVotes: number;
+  amount: number;
+  paymentMethod: string;
+  paymentStatus: string;
+  paymentReference: string;
+  votesApplied: boolean;
+  metadata: VoteTransactionMetadata;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}
 
 // ---------- Pagination ----------
 export type PaginationMeta = {
@@ -330,7 +363,7 @@ export const Admin = {
   addVotes: (candidateId: string, votes: number, reason: string) =>
     api<{ candidate: Candidate }>("/admin/votes/add", { body: { candidateId, votes, reason } }),
   transactions: (q: { page?: number; limit?: number } = {}) =>
-    api<PaginatedResponse<Transaction[], "transactions">>("/payments/transactions", {
+    api<PaginatedResponse<VoteTransaction[], "transactions">>("/payments/transactions", {
       query: q as any,
       raw: true,
     }),
