@@ -5,6 +5,7 @@ import { Loader2, Upload, Check, X, Download } from "lucide-react";
 import { Admin, type AdminUser } from "@/lib/pageantApi";
 import { Pagination } from "@/components/site/Pagination";
 import { TableBodySkeleton, type SkeletonColDef } from "@/components/site/Skeleton";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/users")({
   component: UsersPage,
@@ -69,19 +70,35 @@ function UsersPage() {
   });
   const approve = useMutation({
     mutationFn: (id: string) => Admin.approveUser(id),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["admin-users"] }),
+    onSuccess: () => {
+      toast.success("Applicant approved");
+      qc.invalidateQueries({ queryKey: ["admin-users"] })
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Failed to approve applicant"),
   });
   const reject = useMutation({
     mutationFn: ({ id, notes }: { id: string; notes: string }) => Admin.rejectUser(id, notes),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["admin-users"] }),
+    onSuccess: () => { 
+      toast.success("Applicant rejected"); 
+      qc.invalidateQueries({ queryKey: ["admin-users"] }) 
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Failed to reject applicant"),
   });
   const del = useMutation({
     mutationFn: (id: string) => Admin.deleteUser(id),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["admin-users"] }),
+    onSuccess: () => { 
+      toast.success("Applicant deleted"); 
+      qc.invalidateQueries({ queryKey: ["admin-users"] }) 
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Failed to delete applicant"),
   });
   const upload = useMutation({
     mutationFn: (f: File) => Admin.bulkUpload(f),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["admin-users"] }),
+    onSuccess: () => { 
+      toast.success("Applicant bulk upload succesful"); 
+      qc.invalidateQueries({ queryKey: ["admin-users"] }) 
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Failed to upload"),
   });
 
   const users = usersQ.data?.data ?? [];

@@ -5,6 +5,7 @@ import { Loader2, X, Trash2, Search } from "lucide-react";
 import { Admin, type ContactMessage, type MessageStatus } from "@/lib/pageantApi";
 import { Pagination } from "@/components/site/Pagination";
 import { TableBodySkeleton, type SkeletonColDef } from "@/components/site/Skeleton";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/messages")({
   component: MessagesPage,
@@ -48,7 +49,6 @@ function MessagesPage() {
   const start = (page - 1) * pageSize;
   const end = Math.min(start + pageSize, total);
 
-  console.log("messages:", q?.data);
 
   return (
     <div className="p-4 sm:p-6 md:p-10">
@@ -189,9 +189,11 @@ function MessageDialog({ id, onClose }: { id: string; onClose: () => void }) {
   const del = useMutation({
     mutationFn: () => Admin.deleteMessage(id),
     onSuccess: () => {
+      toast.success("Message Deleted"); 
       qc.invalidateQueries({ queryKey: ["admin-messages"] });
       onClose();
     },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Failed to delete message"),
   });
 
   return (

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 import { Admin } from "@/lib/pageantApi";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/settings")({
   component: SettingsPage,
@@ -20,7 +21,11 @@ function SettingsPage() {
 
   const save = useMutation({
     mutationFn: (body: any) => Admin.updateSettings(body),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["admin-settings"] }),
+    onSuccess: () => {
+       toast.success("Settings updated succesfully"); 
+      qc.invalidateQueries({ queryKey: ["admin-settings"] })
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Failed to update settings"),
   });
 
   const s: any = q.data ?? {};

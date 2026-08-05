@@ -5,6 +5,7 @@ import { Loader2, X, Trash2 } from "lucide-react";
 import { Admin, type QuoteRequest, type QuoteStatus, type QuoteService } from "@/lib/pageantApi";
 import { Pagination } from "@/components/site/Pagination";
 import { TableBodySkeleton, type SkeletonColDef } from "@/components/site/Skeleton";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/quotes")({
   component: QuotesPage,
@@ -193,16 +194,20 @@ function QuoteDialog({ id, onClose }: { id: string; onClose: () => void }) {
   const save = useMutation({
     mutationFn: () => Admin.updateQuote(id, { status, adminNotes: notes }),
     onSuccess: () => {
+       toast.success("Save successful"); 
       qc.invalidateQueries({ queryKey: ["admin-quotes"] });
       qc.invalidateQueries({ queryKey: ["admin-quote", id] });
     },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Save failed"),
   });
   const del = useMutation({
     mutationFn: () => Admin.deleteQuote(id),
     onSuccess: () => {
+       toast.success("Quote Deleted"); 
       qc.invalidateQueries({ queryKey: ["admin-quotes"] });
       onClose();
     },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Failed to delete quote"),
   });
 
   return (

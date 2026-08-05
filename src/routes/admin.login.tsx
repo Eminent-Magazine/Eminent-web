@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { Admin, setAdminToken } from "@/lib/pageantApi";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/login")({
   head: () => ({ meta: [{ title: "Admin sign in · Eminent" }, { name: "robots", content: "noindex" }] }),
@@ -21,9 +22,13 @@ function AdminLogin() {
     try {
       const r = await Admin.login(email, pw);
       if (!r.token) throw new Error("No token returned");
+      toast.success("Signed in");
       setAdminToken(r.token);
       nav({ to: "/admin" });
-    } catch (e: any) { setErr(e.message ?? "Login failed"); }
+    } catch (e: any) { 
+      setErr(e.message ?? "Login failed");
+      toast.error(e.message ?? "Save failed") 
+    }
     finally { setLoading(false); }
   }
 

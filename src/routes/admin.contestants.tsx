@@ -5,6 +5,7 @@ import { Loader2, Plus, Pencil, Trash2, TrendingUp, X } from "lucide-react";
 import { Admin, type Candidate } from "@/lib/pageantApi";
 import { Pagination } from "@/components/site/Pagination";
 import { TableBodySkeleton, type SkeletonColDef } from "@/components/site/Skeleton";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/contestants")({
   component: ContestantsPage,
@@ -32,7 +33,10 @@ function ContestantsPage() {
   });
   const del = useMutation({
     mutationFn: (id: string) => Admin.deleteCandidate(id),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["candidates-admin"] }),
+    onSuccess: () => { 
+      toast.success("Candidate Deleted"); 
+      qc.invalidateQueries({ queryKey: ["candidates-admin"] }) },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Failed to delete"),
   });
 
   const candidates = q.data?.candidates ?? [];
