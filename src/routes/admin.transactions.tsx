@@ -28,7 +28,7 @@ function TxPage() {
   const q = useQuery({
     queryKey: ["admin-tx", page, pageSize],
     queryFn: () => Admin.transactions({ page, limit: pageSize }),
-    refetchInterval: 20_000,
+    refetchInterval: 60_000,
   });
 
   const txs = q.data?.transactions ?? [];

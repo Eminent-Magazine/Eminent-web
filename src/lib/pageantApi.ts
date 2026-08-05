@@ -143,6 +143,10 @@ export type Transaction = {
   createdAt?: string;
 };
 
+type PaymentMethod = "bank_transfer" | "card" | "flutterwave";
+type VotePaymentStatus = "successful" | "pending" | "failed";
+type Purpose = "vote_purchase" | "other_purpose_here";
+
 interface VoteCandidate {
   _id: string;
   name: string;
@@ -162,12 +166,12 @@ interface VoteTransaction {
   fullName: string;
   email: string;
   phone: string;
-  purpose: string;
-  candidateId: Candidate;
+  purpose: Purpose;
+  candidateId: VoteCandidate;
   numberOfVotes: number;
   amount: number;
-  paymentMethod: string;
-  paymentStatus: string;
+  paymentMethod: PaymentMethod;
+  paymentStatus: VotePaymentStatus;
   paymentReference: string;
   votesApplied: boolean;
   metadata: VoteTransactionMetadata;
