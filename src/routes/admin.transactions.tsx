@@ -84,7 +84,7 @@ function TxPage() {
                 <td className="px-4 py-2 tabular-nums">{t.numberOfVotes ?? "—"}</td>
                 <td className="px-4 py-2">
                   <span
-                    className={`text-[10px] uppercase tracking-widest px-2 py-1 ${t.paymentStatus === "successful" ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground"}`}
+                    className={`text-[10px] uppercase tracking-widest px-2 py-1 ${t.paymentStatus === "successful" ? "bg-green-200/15 text-green-400" : t.paymentStatus === "failed" ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground"}`}
                   >
                     {t.paymentStatus}
                   </span>
