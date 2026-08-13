@@ -107,7 +107,7 @@ export function EventsSection() {
           {cards.map((c) => (
             <article
               key={c.key}
-              className="max-w-sm group flex flex-col rounded-sm border border-ivory/12 bg-background/40 hover:border-gold/50 transition-colors"
+              className="max-w-md group flex flex-col rounded-sm border border-ivory/12 bg-background/40 hover:border-gold/50 transition-colors"
               // data-reveal
             >
               <div className="rounded-sm aspect-[11/9] overflow-hidden bg-card">
