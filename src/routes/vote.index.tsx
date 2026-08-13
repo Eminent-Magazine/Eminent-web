@@ -459,7 +459,7 @@ export function VoteDialog({
             </div>
           )}
           <div className="grid grid-cols-2 gap-2 mt-5">
-            <button
+            {/* <button
               disabled={paying !== null}
               onClick={() => pay("paystack")}
               className="btn-primary-white h-10"
@@ -474,7 +474,7 @@ export function VoteDialog({
                   loading="lazy"
                 />
               )}
-            </button>
+            </button> */}
             <button
               disabled={paying !== null}
               onClick={() => pay("flutterwave")}
@@ -490,6 +490,9 @@ export function VoteDialog({
                   loading="lazy"
                 />
               )}
+            </button>
+            <button type="button" onClick={onClose} className="btn-red h-10">
+              Cancel
             </button>
           </div>
           <p className="text-[11px] text-muted-foreground text-center mt-3">
