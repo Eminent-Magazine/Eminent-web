@@ -256,7 +256,7 @@ function VotePage() {
                         onClick={() =>
                           navigator
                             ?.share?.({ title: `Vote for ${c.name}`, url: window.location.href })
-                            .catch(() => {})
+                            .catch(() => { })
                         }
                         className="w-10 h-10 grid place-items-center border border-input hover:border-primary hover:text-primary transition-colors"
                         aria-label="Share"

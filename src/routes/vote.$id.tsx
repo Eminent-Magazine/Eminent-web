@@ -29,7 +29,7 @@ function ContestantPage() {
 
   const c = q.data?.candidate;
   const results = resultsQ.data?.results ?? [];
-  const rank = c ? results?.[0]?.candidates.find((r: ResultCandidate) =>  r.candidateId === c._id) : 0;
+  const rank = c ? results?.[0]?.candidates.find((r: ResultCandidate) => r.candidateId === c._id) : 0;
   const totalVotes = results.reduce((sum: number, r: any) => sum + (r.votes ?? 0), 0);
   const share = c
     ? Number(((c.votes ?? 0) / Math.max(totalVotes, 1)) * 100).toFixed(1)

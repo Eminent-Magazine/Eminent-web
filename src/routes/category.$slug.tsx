@@ -111,7 +111,7 @@ function CategoryPage() {
               type="button"
               onClick={() => setActive(w)}
               className="group mb-6 md:mb-8 block w-full break-inside-avoid text-left"
-              // data-reveal
+            // data-reveal
             >
               <div className="rounded-editorial overflow-hidden bg-card">
                 <img
@@ -162,9 +162,9 @@ function CategoryPage() {
         <p className="eyebrow eyebrow-dot mb-8" data-reveal>More portfolios</p>
         <ul className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4">
           {siblings.map((c) => (
-            <li 
-              key={c.slug} 
-              // data-reveal
+            <li
+              key={c.slug}
+            // data-reveal
             >
               <Link
                 to="/category/$slug"
@@ -197,6 +197,15 @@ function CategoryPage() {
     </SiteLayout>
   );
 }
+
+
+
+
+
+
+
+
+
 
 
 
@@ -358,8 +367,8 @@ function CategoryPage() {
 //       {/* STORY GRID */}
 //       {rest.length > 0 && (
 //         <section className="container-editorial py-20 md:py-28">
-//           <div 
-//             className="flex items-end justify-between gap-6 mb-12" 
+//           <div
+//             className="flex items-end justify-between gap-6 mb-12"
 //             data-reveal
 //           >
 //             <div>
