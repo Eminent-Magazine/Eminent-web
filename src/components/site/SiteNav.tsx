@@ -3,12 +3,12 @@ import { Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const NAV = [
-  { to: "/", label: "Stories" },
-  { to: "/vote", label: "Vote" },
-  { to: "/register", label: "Register" },
-  { to: "/magazine", label: "Categories" },
+  { to: "/", label: "Home" },
   { to: "/about", label: "About" },
   { to: "/services", label: "Advertise" },
+  { to: "/stories", label: "Stories" },
+  { to: "/register", label: "Register" },
+  { to: "/vote", label: "Vote" },
   { to: "/contact", label: "Contact" },
 ] as const;
 

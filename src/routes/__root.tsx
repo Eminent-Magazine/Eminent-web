@@ -75,9 +75,9 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  pendingComponent: () => <EminentLoader variant="inline" />,
-  pendingMs: 200,      // don't flash the loader for near-instant loads
-  pendingMinMs: 400,   // once shown, keep it visible at least this long (avoids flicker)
+  // pendingComponent: () => <EminentLoader variant="inline" />,
+  // pendingMs: 200,      // don't flash the loader for near-instant loads
+  // pendingMinMs: 400,   // once shown, keep it visible at least this long (avoids flicker)
   head: () => ({
     meta: [
       { charSet: "utf-8" },

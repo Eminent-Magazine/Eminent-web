@@ -1,6 +1,6 @@
 import { createFileRoute, Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { LogOut, LayoutDashboard, Users, Crown, Receipt, Settings, MessageSquare, FileText, Menu, X } from "lucide-react";
+import { LogOut, LayoutDashboard, Users, Crown, Receipt, Settings, MessageSquare, FileText, Menu, X, PenSquare } from "lucide-react";
 import { clearAdminToken, getAdminToken } from "@/lib/pageantApi";
 
 export const Route = createFileRoute("/admin")({
@@ -15,6 +15,7 @@ const NAV: { to: string; label: string; icon: any; exact?: boolean }[] = [
   { to: "/admin/transactions", label: "Transactions", icon: Receipt },
   { to: "/admin/messages", label: "Messages", icon: MessageSquare },
   { to: "/admin/quotes", label: "Quotes", icon: FileText },
+  { to: "/admin/studio", label: "Content Studio", icon: PenSquare },
   { to: "/admin/settings", label: "Settings", icon: Settings },
 ];
 

@@ -1,9 +1,17 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteLayout, PageHeader } from "@/components/site/SiteLayout";
-import pageant from "@/assets/pageant.jpg";
-import c1 from "@/assets/contestant-1.jpg";
-import c3 from "@/assets/contestant-3.jpg";
-import c4 from "@/assets/contestant-4.jpg";
+import pageant from "@/assets/EminentImages/winnerLastPastQueen.jpg";
+import c1 from "@/assets/EminentImages/immediatePastQueen.jpg";
+import c2 from "@/assets/EminentImages/pastQueen0.jpg";
+import c3 from "@/assets/EminentImages/pastQueen4.jpg";
+import c4 from "@/assets/EminentImages/pastQueen2020.jpg";
+import c5 from "@/assets/EminentImages/pastQueen3.jpg";
+import c6 from "@/assets/EminentImages/pastQueen2.jpg";
+import c7 from "@/assets/EminentImages/pastQUEEN.jpg";
+// import pageant from "@/assets/pageant.jpg";
+// import c1 from "@/assets/contestant-1.jpg";
+// import c3 from "@/assets/contestant-3.jpg";
+// import c4 from "@/assets/contestant-4.jpg";
 
 export const Route = createFileRoute("/pageantry")({
   head: () => ({
@@ -24,7 +32,7 @@ function PageantryPage() {
     <SiteLayout>
       <section className="relative bg-ink text-ivory overflow-hidden">
         <div className="absolute inset-0">
-          <img src={pageant} alt="Eminent pageant stage" className="w-full h-full object-cover opacity-45" />
+          <img src={c1} alt="Eminent pageant stage" className="w-full h-full object-cover opacity-45" />
           <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/60 to-ink/30" />
         </div>
         <div className="container-editorial relative py-28 md:py-40 text-center">
@@ -33,7 +41,7 @@ function PageantryPage() {
           <p className="mt-6 max-w-xl mx-auto text-ivory/80">Six seasons. 140+ contestants. One growing legacy of grace, service and enterprise.</p>
           <div className="mt-8 flex flex-wrap gap-3 justify-center">
             <Link to="/vote" className="btn-primary-ivory">Vote 2026</Link>
-            <Link to="/modeling" className="btn-outline-gold !text-ivory !border-ivory/40 hover:!text-ink">Apply for Season 7</Link>
+            <Link to="/modeling" className="btn-primary-white  !flex items-center !text-black !border-ivory/40 hover:!text-ink">Apply for Season 7</Link>
           </div>
         </div>
       </section>
@@ -46,12 +54,13 @@ function PageantryPage() {
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
           {[
-            { img: c1, name: "Adaeze Okoye", year: "Season 6 · 2025" },
-            { img: c3, name: "Nkechi Obi", year: "Season 5 · 2024" },
-            { img: c4, name: "Rukayat Bello", year: "Season 4 · 2023" },
-            { img: pageant, name: "Ifunanya Eze", year: "Season 3 · 2022" },
-            { img: c1, name: "Zara Musa", year: "Season 2 · 2021" },
-            { img: c3, name: "Chiamaka Uzo", year: "Season 1 · 2020" },
+            { img: c1, name: "Adaeze Okoye", year: "Season 13 · 2025" },
+            { img: c3, name: "Nkechi Obi", year: "Season 12 · 2024" },
+            { img: c7, name: "Rukayat Bello", year: "Season 11 · 2023" },
+            { img: c6, name: "Ifunanya Eze", year: "Season 10 · 2022" },
+            { img: c5, name: "Zara Musa", year: "Season 3 · 2014" },
+            { img: c7, name: "Chia Uzo", year: "Season 2 · 2013" },
+            { img: c2, name: "Chi Uzo", year: "Season 1 · 2012" },
           ].map((w) => (
             <figure key={w.name} className="group hover-lift">
               <div className="aspect-[4/5] overflow-hidden bg-muted">

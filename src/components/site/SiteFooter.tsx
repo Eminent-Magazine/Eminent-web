@@ -43,8 +43,8 @@ export function SiteFooter() {
             <p className="eyebrow eyebrow-dot mb-6">Explore</p>
             <ul className="space-y-3 text-sm text-ivory/80">
               {[
-                ["/", "Stories"],
-                ["/magazine", "Categories"],
+                ["/", "Home"],
+                ["/stories", "Stories"],
                 ["/about", "About"],
                 ["/services", "Advertise"],
                 ["/contact", "Contact"],

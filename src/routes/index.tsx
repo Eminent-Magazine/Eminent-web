@@ -2,6 +2,10 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { ArrowUpRight, ArrowRight } from "lucide-react";
 import { SiteLayout } from "@/components/site/SiteLayout";
+import { EventsSection } from "@/components/site/EventsSection";
+import { eventsQueryOptions } from "@/sanity/queries";
+
+import { SITE, SERVICE_LINES } from "@/content/site";
 import hero from "@/assets/em-hero.jpg";
 import storyFashion from "@/assets/em-story-fashion.jpg";
 import storyPhoto from "@/assets/em-story-photo.jpg";
@@ -10,6 +14,8 @@ import storyCulture from "@/assets/em-story-culture.jpg";
 import storyLifestyle from "@/assets/em-story-lifestyle.jpg";
 
 export const Route = createFileRoute("/")({
+  loader: ({ context }) =>
+    context.queryClient.ensureQueryData(eventsQueryOptions).catch(() => []),
   head: () => ({
     meta: [
       { title: "Eminent Magazine — Stories Worth Telling" },
@@ -174,12 +180,22 @@ function HomePage() {
               what matters now.
             </p>
             <p>
-              We believe every story deserves to be seen with the same craft as
-              the moment it captures. Our editorial team works closely with
-              photographers, stylists, models and brands to produce features
-              that are as visually striking as they are substantive. Your story
-              deserves the spotlight — let us tell it.
+              Behind the pages is Eminent International Media World Limited — a
+              full-service house in Awka offering magazine, media coverage, studio
+              photos, branding and printing, online publishing, modeling training,
+              pageantry, ushering and advertising/PR. Everything you need in a media
+              house, packed together as one.
             </p>
+            <ul className="grid sm:grid-cols-2 gap-x-8 gap-y-2 text-sm not-prose">
+              {SERVICE_LINES.map((s) => (
+                <li key={s} className="flex gap-3 border-b border-ivory/10 py-2">
+                  <span className="text-gold">✦</span> {s}
+                </li>
+              ))}
+            </ul>
+            <a href={SITE.youtube.url} target="_blank" rel="noopener" className="btn-ghost-ivory inline-flex">
+              Watch {SITE.youtube.label} <ArrowUpRight className="w-3.5 h-3.5" />
+            </a>
           </div>
         </div>
       </section>
@@ -194,7 +210,7 @@ function HomePage() {
             </h2>
           </div>
           <Link
-            to="/magazine"
+            to="/stories"
             className="hidden sm:inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.28em] text-ivory hover:text-gold transition-colors font-semibold"
           >
             View all <ArrowUpRight className="w-4 h-4" />
@@ -345,7 +361,7 @@ function HomePage() {
       </section>
 
       {/* LATEST ISSUE */}
-      <section className="py-28 md:py-36 border-t border-border">
+      {/* <section className="py-28 md:py-36 border-t border-border">
         <div className="container-editorial flex items-end justify-between gap-6 mb-14" data-reveal>
           <div>
             <p className="eyebrow eyebrow-dot mb-5">Latest Issue</p>
@@ -388,7 +404,10 @@ function HomePage() {
             More Stories <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
-      </section>
+      </section> */}
+
+      {/* WHAT'S HAPPENING NOW */}
+      <EventsSection />
 
       {/* SUBSCRIBE CTA */}
       <section id="subscribe" className="relative overflow-hidden border-t border-border">

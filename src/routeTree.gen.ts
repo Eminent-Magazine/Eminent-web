@@ -13,7 +13,6 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as ContactRouteImport } from './routes/contact'
-import { Route as MagazineRouteImport } from './routes/magazine'
 import { Route as ModelingRouteImport } from './routes/modeling'
 import { Route as PageantryRouteImport } from './routes/pageantry'
 import { Route as RegisterRouteImport } from './routes/register'
@@ -32,10 +31,12 @@ import { Route as AdminTransactionsRouteImport } from './routes/admin.transactio
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as CategorySlugRouteImport } from './routes/category.$slug'
 import { Route as RegisterCallbackRouteImport } from './routes/register.callback'
+import { Route as StoriesIndexRouteImport } from './routes/stories.index'
 import { Route as StoriesSlugRouteImport } from './routes/stories.$slug'
 import { Route as VoteIndexRouteImport } from './routes/vote.index'
 import { Route as VoteIdRouteImport } from './routes/vote.$id'
 import { Route as VoteCallbackRouteImport } from './routes/vote.callback'
+import { Route as AdminStudioSplatRouteImport } from './routes/admin.studio.$'
 import { Route as ApiPublicPageantSplatRouteImport } from './routes/api/public/pageant.$'
 
 const IndexRoute = IndexRouteImport.update({
@@ -56,11 +57,6 @@ const AdminRoute = AdminRouteImport.update({
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MagazineRoute = MagazineRouteImport.update({
-  id: '/magazine',
-  path: '/magazine',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ModelingRoute = ModelingRouteImport.update({
@@ -153,6 +149,11 @@ const RegisterCallbackRoute = RegisterCallbackRouteImport.update({
   path: '/callback',
   getParentRoute: () => RegisterRoute,
 } as any)
+const StoriesIndexRoute = StoriesIndexRouteImport.update({
+  id: '/stories/',
+  path: '/stories/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const StoriesSlugRoute = StoriesSlugRouteImport.update({
   id: '/stories/$slug',
   path: '/stories/$slug',
@@ -173,6 +174,11 @@ const VoteCallbackRoute = VoteCallbackRouteImport.update({
   path: '/callback',
   getParentRoute: () => VoteRoute,
 } as any)
+const AdminStudioSplatRoute = AdminStudioSplatRouteImport.update({
+  id: '/studio/$',
+  path: '/studio/$',
+  getParentRoute: () => AdminRoute,
+} as any)
 const ApiPublicPageantSplatRoute = ApiPublicPageantSplatRouteImport.update({
   id: '/api/public/pageant/$',
   path: '/api/public/pageant/$',
@@ -184,7 +190,6 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/admin': typeof AdminRouteWithChildren
   '/contact': typeof ContactRoute
-  '/magazine': typeof MagazineRoute
   '/modeling': typeof ModelingRoute
   '/pageantry': typeof PageantryRoute
   '/register': typeof RegisterRouteWithChildren
@@ -206,14 +211,15 @@ export interface FileRoutesByFullPath {
   '/vote/$id': typeof VoteIdRoute
   '/vote/callback': typeof VoteCallbackRoute
   '/admin/': typeof AdminIndexRoute
+  '/stories/': typeof StoriesIndexRoute
   '/vote/': typeof VoteIndexRoute
+  '/admin/studio/$': typeof AdminStudioSplatRoute
   '/api/public/pageant/$': typeof ApiPublicPageantSplatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
-  '/magazine': typeof MagazineRoute
   '/modeling': typeof ModelingRoute
   '/pageantry': typeof PageantryRoute
   '/register': typeof RegisterRouteWithChildren
@@ -234,7 +240,9 @@ export interface FileRoutesByTo {
   '/vote/$id': typeof VoteIdRoute
   '/vote/callback': typeof VoteCallbackRoute
   '/admin': typeof AdminIndexRoute
+  '/stories': typeof StoriesIndexRoute
   '/vote': typeof VoteIndexRoute
+  '/admin/studio/$': typeof AdminStudioSplatRoute
   '/api/public/pageant/$': typeof ApiPublicPageantSplatRoute
 }
 export interface FileRoutesById {
@@ -243,7 +251,6 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/admin': typeof AdminRouteWithChildren
   '/contact': typeof ContactRoute
-  '/magazine': typeof MagazineRoute
   '/modeling': typeof ModelingRoute
   '/pageantry': typeof PageantryRoute
   '/register': typeof RegisterRouteWithChildren
@@ -265,7 +272,9 @@ export interface FileRoutesById {
   '/vote/$id': typeof VoteIdRoute
   '/vote/callback': typeof VoteCallbackRoute
   '/admin/': typeof AdminIndexRoute
+  '/stories/': typeof StoriesIndexRoute
   '/vote/': typeof VoteIndexRoute
+  '/admin/studio/$': typeof AdminStudioSplatRoute
   '/api/public/pageant/$': typeof ApiPublicPageantSplatRoute
 }
 export interface FileRouteTypes {
@@ -275,7 +284,6 @@ export interface FileRouteTypes {
     | '/about'
     | '/admin'
     | '/contact'
-    | '/magazine'
     | '/modeling'
     | '/pageantry'
     | '/register'
@@ -297,14 +305,15 @@ export interface FileRouteTypes {
     | '/vote/$id'
     | '/vote/callback'
     | '/admin/'
+    | '/stories/'
     | '/vote/'
+    | '/admin/studio/$'
     | '/api/public/pageant/$'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
     | '/contact'
-    | '/magazine'
     | '/modeling'
     | '/pageantry'
     | '/register'
@@ -325,7 +334,9 @@ export interface FileRouteTypes {
     | '/vote/$id'
     | '/vote/callback'
     | '/admin'
+    | '/stories'
     | '/vote'
+    | '/admin/studio/$'
     | '/api/public/pageant/$'
   id:
     | '__root__'
@@ -333,7 +344,6 @@ export interface FileRouteTypes {
     | '/about'
     | '/admin'
     | '/contact'
-    | '/magazine'
     | '/modeling'
     | '/pageantry'
     | '/register'
@@ -355,7 +365,9 @@ export interface FileRouteTypes {
     | '/vote/$id'
     | '/vote/callback'
     | '/admin/'
+    | '/stories/'
     | '/vote/'
+    | '/admin/studio/$'
     | '/api/public/pageant/$'
   fileRoutesById: FileRoutesById
 }
@@ -364,7 +376,6 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AdminRoute: typeof AdminRouteWithChildren
   ContactRoute: typeof ContactRoute
-  MagazineRoute: typeof MagazineRoute
   ModelingRoute: typeof ModelingRoute
   PageantryRoute: typeof PageantryRoute
   RegisterRoute: typeof RegisterRouteWithChildren
@@ -375,6 +386,7 @@ export interface RootRouteChildren {
   VoteRoute: typeof VoteRouteWithChildren
   CategorySlugRoute: typeof CategorySlugRoute
   StoriesSlugRoute: typeof StoriesSlugRoute
+  StoriesIndexRoute: typeof StoriesIndexRoute
   ApiPublicPageantSplatRoute: typeof ApiPublicPageantSplatRoute
 }
 
@@ -406,13 +418,6 @@ declare module '@tanstack/react-router' {
       path: '/contact'
       fullPath: '/contact'
       preLoaderRoute: typeof ContactRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/magazine': {
-      id: '/magazine'
-      path: '/magazine'
-      fullPath: '/magazine'
-      preLoaderRoute: typeof MagazineRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/modeling': {
@@ -541,6 +546,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RegisterCallbackRouteImport
       parentRoute: typeof RegisterRoute
     }
+    '/stories/': {
+      id: '/stories/'
+      path: '/stories'
+      fullPath: '/stories/'
+      preLoaderRoute: typeof StoriesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/stories/$slug': {
       id: '/stories/$slug'
       path: '/stories/$slug'
@@ -569,6 +581,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VoteCallbackRouteImport
       parentRoute: typeof VoteRoute
     }
+    '/admin/studio/$': {
+      id: '/admin/studio/$'
+      path: '/studio/$'
+      fullPath: '/admin/studio/$'
+      preLoaderRoute: typeof AdminStudioSplatRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/api/public/pageant/$': {
       id: '/api/public/pageant/$'
       path: '/api/public/pageant/$'
@@ -588,6 +607,7 @@ interface AdminRouteChildren {
   AdminTransactionsRoute: typeof AdminTransactionsRoute
   AdminUsersRoute: typeof AdminUsersRoute
   AdminIndexRoute: typeof AdminIndexRoute
+  AdminStudioSplatRoute: typeof AdminStudioSplatRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
@@ -599,6 +619,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminTransactionsRoute: AdminTransactionsRoute,
   AdminUsersRoute: AdminUsersRoute,
   AdminIndexRoute: AdminIndexRoute,
+  AdminStudioSplatRoute: AdminStudioSplatRoute,
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
@@ -634,7 +655,6 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   AdminRoute: AdminRouteWithChildren,
   ContactRoute: ContactRoute,
-  MagazineRoute: MagazineRoute,
   ModelingRoute: ModelingRoute,
   PageantryRoute: PageantryRoute,
   RegisterRoute: RegisterRouteWithChildren,
@@ -645,6 +665,7 @@ const rootRouteChildren: RootRouteChildren = {
   VoteRoute: VoteRouteWithChildren,
   CategorySlugRoute: CategorySlugRoute,
   StoriesSlugRoute: StoriesSlugRoute,
+  StoriesIndexRoute: StoriesIndexRoute,
   ApiPublicPageantSplatRoute: ApiPublicPageantSplatRoute,
 }
 export const routeTree = rootRouteImport

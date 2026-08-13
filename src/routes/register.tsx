@@ -28,7 +28,7 @@ function RegisterPage() {
 
 
   if (settingsQ.isLoading) {
-    return   <EminentLoader caption={"Loading Registration Page"} variant="overlay" />
+    return <RegisterPageSkeleton />;
   }
 
   if (!s?.registrationEnabled) {
