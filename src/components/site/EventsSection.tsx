@@ -80,8 +80,6 @@ export function EventsSection() {
   const { data } = useQuery({ ...eventsQueryOptions, staleTime: 60_000 });
   const cards = data && data.length > 0 ? data.map(toCard) : FALLBACK;
 
-  console.log("cards event sections:", cards, data)
-
   return (
     <section className="border-y border-border bg-card/40">
       <div className="container-editorial py-20 md:py-28">
