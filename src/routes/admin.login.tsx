@@ -46,7 +46,7 @@ function AdminLogin() {
         <div className="mt-6 space-y-3">
           <input required type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" className="w-full h-11 px-3 bg-ink border border-ivory/20 text-sm rounded-sm text-ivory" />
           <div className="relative">
-            <input required type="password" value={pw} onChange={(e) => setPw(e.target.value)} placeholder="Password" className="w-full h-11 px-3 bg-ink border border-ivory/20 text-sm rounded-sm text-ivory" />
+            <input required type={showPw ? "text" : "password"} value={pw} onChange={(e) => setPw(e.target.value)} placeholder="Password" className="w-full h-11 px-3 bg-ink border border-ivory/20 text-sm rounded-sm text-ivory" />
             <button
               type="button"
               tabIndex={-1}
