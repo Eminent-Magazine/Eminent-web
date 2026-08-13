@@ -61,7 +61,7 @@ function toCard(e: EventDoc): Card {
 
 function Cta({ href, label }: { href: string; label: string }) {
   const external = /^https?:/i.test(href);
-  const cls = "btn-red mt-6 inline-flex items-center gap-2 text-[11px]";
+  const cls = "btn-red mt-6 inline-flex items-center gap-2 text-[11px] text-nowrap";
   if (external) {
     return (
       <a href={href} target="_blank" rel="noopener noreferrer" className={cls}>
@@ -107,7 +107,7 @@ export function EventsSection() {
           {cards.map((c) => (
             <article
               key={c.key}
-              className="max-w-md group flex flex-col rounded-sm border border-ivory/12 bg-background/40 hover:border-gold/50 transition-colors"
+              className="max-w-sm group flex flex-col rounded-sm border border-ivory/12 bg-background/40 hover:border-gold/50 transition-colors"
               // data-reveal
             >
               <div className="rounded-sm aspect-[11/9] overflow-hidden bg-card">
