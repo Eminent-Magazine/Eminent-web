@@ -7,6 +7,7 @@ const NAV = [
   { to: "/about", label: "About" },
   { to: "/services", label: "Advertise" },
   { to: "/stories", label: "Stories" },
+  { to: "/pageantry", label: "Pageants" },
   { to: "/register", label: "Register" },
   { to: "/vote", label: "Vote" },
   { to: "/contact", label: "Contact" },
@@ -79,7 +80,7 @@ export function SiteNav() {
                 <span className="text-[10px] text-gold/60 tabular-nums tracking-widest">
                   0{i + 1}
                 </span>
-                <span className="font-display text-3xl sm:text-4xl md:text-6xl lg:text-7xl leading-[0.9] tracking-tight">
+                <span className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl leading-[0.9] tracking-tight">
                   {item.label}
                 </span>
               </Link>

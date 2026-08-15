@@ -55,9 +55,9 @@ function PageantryPage() {
         <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
           {[
             { img: c1, name: "Adaeze Okoye", year: "Season 13 · 2025" },
-            { img: c3, name: "Nkechi Obi", year: "Season 12 · 2024" },
             { img: c7, name: "Rukayat Bello", year: "Season 11 · 2023" },
             { img: c6, name: "Ifunanya Eze", year: "Season 10 · 2022" },
+            { img: c3, name: "Nkechi Obi", year: "Season 8 · 2019" },
             { img: c5, name: "Zara Musa", year: "Season 3 · 2014" },
             { img: c7, name: "Chia Uzo", year: "Season 2 · 2013" },
             { img: c2, name: "Chi Uzo", year: "Season 1 · 2012" },
