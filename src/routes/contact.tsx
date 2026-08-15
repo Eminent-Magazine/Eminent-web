@@ -35,7 +35,7 @@ function ContactPage() {
               { icon: Phone, label: "Call us", value: "+234 705 093 1952", href: "tel:+2347050931952." },
               { icon: Mail, label: "Email", value: "info@eminentmagazine.com", href: "mailto:info@eminentmagazine.com" },
               { icon: Instagram, label: "Instagram", value: "@eminentmagazine", href: "https://instagram.com/eminentmagazine" },
-              { icon: MapPin, label: "Visit", value: "No 75 Arthur Eze Avenue by unizik junction, Awka, Anambra State Nigeria." },
+              { icon: MapPin, label: "Visit", value: "No 98 Arthur Eze Avenue by unizik junction, Awka, Anambra State Nigeria." },
             ].map(({ icon: Icon, label, value, href }) => (
               <a key={label} href={href ?? "#"} className="flex gap-4 group border-b border-border pb-4">
                 <div className="w-11 h-11 grid place-items-center border border-border group-hover:border-primary group-hover:text-primary transition-colors">
@@ -52,7 +52,7 @@ function ContactPage() {
           <div className="mt-10 aspect-[4/3] overflow-hidden border border-border">
             <iframe
               title="Eminent Magazine offices"
-              src="https://www.google.com/maps?q=75%20Arthur%20Eze%20Avenue%20by%20unizik%20junction,%20Awka,%20Anambra%20State,%20Nigeria&output=embed"
+              src="https://www.google.com/maps?q=98%20Arthur%20Eze%20Avenue%20by%20unizik%20junction,%20Awka,%20Anambra%20State,%20Nigeria&output=embed"
               className="w-full h-full"
               loading="lazy"
             />

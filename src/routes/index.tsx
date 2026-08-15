@@ -115,7 +115,7 @@ function HomePage() {
         <div className="relative container-editorial min-h-screen flex flex-col justify-end pb-20 md:pb-28 pt-40">
           <div className="max-w-5xl">
             <p className="eyebrow eyebrow-dot mb-8" data-reveal>
-              Issue 048 · Latest
+              Issue 027 · Latest
             </p>
             <h1
               className="font-display text-ivory text-6xl sm:text-7xl md:text-8xl lg:text-[9.5rem] leading-[0.9] tracking-tight"

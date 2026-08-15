@@ -75,6 +75,14 @@ function CategoryPage() {
   const [active, setActive] = useState<WorkSample | null>(null);
   const siblings = CATEGORIES.filter((c) => c.slug !== category.slug);
 
+  const shouldRefer = (item: WorkSample) => {
+    if (item.url) {
+      window.open(item.url, "_blank", "noopener,noreferrer");
+      return;
+    }
+    setActive(item);
+  };
+
   return (
     <SiteLayout>
       {/* HERO */}
@@ -109,7 +117,7 @@ function CategoryPage() {
             <button
               key={`${w.title}-${i}`}
               type="button"
-              onClick={() => setActive(w)}
+              onClick={() => shouldRefer(w)}
               className="group mb-6 md:mb-8 block w-full break-inside-avoid text-left"
             // data-reveal
             >

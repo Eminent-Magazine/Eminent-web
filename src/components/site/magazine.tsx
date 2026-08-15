@@ -25,14 +25,14 @@ const STORIES = [
   { img: c3, category: "Interview", title: "Zainab Musa on building a beauty brand from Kano to the world", read: "9 min" },
   { img: pageant, category: "Pageantry", title: "Inside the making of Face of Eminent 2026", read: "8 min" },
   { img: c4, category: "Culture", title: "Six young Nigerian creatives to watch this season", read: "7 min" },
-  { img: magStack, category: "Editor's Letter", title: "Issue 048 — Why we chose grace as our word for the year", read: "4 min" },
+  { img: magStack, category: "Editor's Letter", title: "Issue 027 — Why we chose grace as our word for the year", read: "4 min" },
 ];
 
 function MagazinePage() {
   const [featured, ...rest] = STORIES;
   return (
     <SiteLayout>
-      <PageHeader eyebrow="Issue 048 · The Grace Issue" title="Stories that inspire." subtitle="Editorial features, style dispatches and interviews from across the continent." />
+      <PageHeader eyebrow="Issue 027 · The Grace Issue" title="Stories that inspire." subtitle="Editorial features, style dispatches and interviews from across the continent." />
 
       <section className="container-editorial py-16">
         <Link to="/magazine" className="group grid md:grid-cols-2 gap-8 items-center border-b border-border pb-16">
