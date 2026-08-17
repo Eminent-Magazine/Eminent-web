@@ -333,8 +333,17 @@ export function VoteDialog({
   contestant: Candidate;
   onClose: () => void;
 }) {
-  const packagesQ = useQuery({ queryKey: ["packages"], queryFn: Public.packages });
+  const settingsQ = useQuery({ queryKey: ["reg-settings"], queryFn: Public.registrationSettings });
+  const s = settingsQ.data;
+  const votingEnabled = s?.votingEnabled ?? false;
+
+  const packagesQ = useQuery({
+    queryKey: ["packages"],
+    queryFn: Public.packages,
+    enabled: votingEnabled, // no point fetching bundles if voting's closed
+  });
   const packages = packagesQ.data?.packages ?? [];
+
   const [bundle, setBundle] = useState<VotePackage | null>(null);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -400,9 +409,9 @@ export function VoteDialog({
             <X />
           </button>
         </div>
+
         <div className="p-6">
-          <p className="eyebrow mb-3">Choose your bundle</p>
-          {packagesQ.isLoading ? (
+          {settingsQ.isLoading ? (
             <div className="grid grid-cols-2 gap-2">
               {Array.from({ length: 4 }).map((_, i) => (
                 <div key={i} className="border border-border p-4">
@@ -411,93 +420,105 @@ export function VoteDialog({
                 </div>
               ))}
             </div>
+          ) : !votingEnabled ? (
+            <div className="text-center py-8">
+              <p className="font-display text-2xl mb-2">Voting is currently closed</p>
+              <p className="text-sm text-muted-foreground">
+                Please check back later — voting isn't open at this time.
+              </p>
+              <button
+                type="button"
+                onClick={onClose}
+                className="btn-red h-10 px-6 mt-6"
+              >
+                Close
+              </button>
+            </div>
           ) : (
-            <div className="grid grid-cols-2 gap-2">
-              {packages.map((b) => (
+            <>
+              <p className="eyebrow mb-3">Choose your bundle</p>
+              {packagesQ.isLoading ? (
+                <div className="grid grid-cols-2 gap-2">
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <div key={i} className="border border-border p-4">
+                      <Skeleton height="2rem" width="60%" className="mb-2" />
+                      <Skeleton height="1rem" width="45%" />
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 gap-2">
+                  {packages.map((b) => (
+                    <button
+                      key={b.numberOfVotes}
+                      onClick={() => setBundle(b)}
+                      className={`text-left border p-4 transition-colors ${active?.numberOfVotes === b.numberOfVotes ? "border-primary bg-primary/5" : "border-border hover:border-primary/50"}`}
+                    >
+                      <p className="font-display text-2xl">
+                        {b.numberOfVotes} <span className="text-sm text-muted-foreground">votes</span>
+                      </p>
+                      <p className="text-sm mt-1">
+                        {b.currency === "NGN" ? "₦" : b.currency + " "}
+                        {b.price.toLocaleString()}
+                      </p>
+                    </button>
+                  ))}
+                </div>
+              )}
+              <div className="mt-5 space-y-3">
+                <input
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Full name"
+                  className="w-full h-11 px-3 bg-card border border-input text-sm rounded-sm"
+                />
+                <input
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  type="email"
+                  placeholder="Email (for receipt)"
+                  className="w-full h-11 px-3 bg-card border border-input text-sm rounded-sm"
+                />
+                <input
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="Phone"
+                  className="w-full h-11 px-3 bg-card border border-input text-sm rounded-sm"
+                />
+              </div>
+              {err && <p className="text-xs text-destructive mt-3">{err}</p>}
+              {active && (
+                <div className="mt-5 flex items-center justify-between text-sm border-t border-border pt-4">
+                  <span className="text-muted-foreground">Total</span>
+                  <span className="font-display text-2xl">₦{active.price.toLocaleString()}</span>
+                </div>
+              )}
+              <div className="grid grid-cols-2 gap-2 mt-5">
                 <button
-                  key={b.numberOfVotes}
-                  onClick={() => setBundle(b)}
-                  className={`text-left border p-4 transition-colors ${active?.numberOfVotes === b.numberOfVotes ? "border-primary bg-primary/5" : "border-border hover:border-primary/50"}`}
+                  disabled={paying !== null}
+                  onClick={() => pay("flutterwave")}
+                  className="btn-primary-white h-10"
                 >
-                  <p className="font-display text-2xl">
-                    {b.numberOfVotes} <span className="text-sm text-muted-foreground">votes</span>
-                  </p>
-                  <p className="text-sm mt-1">
-                    {b.currency === "NGN" ? "₦" : b.currency + " "}
-                    {b.price.toLocaleString()}
-                  </p>
+                  {paying === "flutterwave" ? (
+                    <Loader2 className="w-4 h-4 animate-spin mx-auto" />
+                  ) : (
+                    <img
+                      src={"/Flutterwave-Logo.png"}
+                      alt="pay with Flutterwave"
+                      className="h-20 object-center rounded-full"
+                      loading="lazy"
+                    />
+                  )}
                 </button>
-              ))}
-            </div>
+                <button type="button" onClick={onClose} className="btn-red h-10">
+                  Cancel
+                </button>
+              </div>
+              <p className="text-[11px] text-muted-foreground text-center mt-3">
+                Votes credit only after verified payment. No refunds on cast votes.
+              </p>
+            </>
           )}
-          <div className="mt-5 space-y-3">
-            <input
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Full name"
-              className="w-full h-11 px-3 bg-card border border-input text-sm rounded-sm"
-            />
-            <input
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              type="email"
-              placeholder="Email (for receipt)"
-              className="w-full h-11 px-3 bg-card border border-input text-sm rounded-sm"
-            />
-            <input
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              placeholder="Phone"
-              className="w-full h-11 px-3 bg-card border border-input text-sm rounded-sm"
-            />
-          </div>
-          {err && <p className="text-xs text-destructive mt-3">{err}</p>}
-          {active && (
-            <div className="mt-5 flex items-center justify-between text-sm border-t border-border pt-4">
-              <span className="text-muted-foreground">Total</span>
-              <span className="font-display text-2xl">₦{active.price.toLocaleString()}</span>
-            </div>
-          )}
-          <div className="grid grid-cols-2 gap-2 mt-5">
-            {/* <button
-              disabled={paying !== null}
-              onClick={() => pay("paystack")}
-              className="btn-primary-white h-10"
-            >
-              {paying === "paystack" ? (
-                <Loader2 className="w-4 h-4 animate-spin mx-auto" />
-              ) : (
-                <img
-                  src={"/Paystack-Logo.png"}
-                  alt="pay with Paystack"
-                  className="h-20 object-center rounded-full"
-                  loading="lazy"
-                />
-              )}
-            </button> */}
-            <button
-              disabled={paying !== null}
-              onClick={() => pay("flutterwave")}
-              className="btn-primary-white h-10"
-            >
-              {paying === "flutterwave" ? (
-                <Loader2 className="w-4 h-4 animate-spin mx-auto" />
-              ) : (
-                <img
-                  src={"/Flutterwave-Logo.png"}
-                  alt="pay with Flutterwave"
-                  className="h-20 object-center rounded-full"
-                  loading="lazy"
-                />
-              )}
-            </button>
-            <button type="button" onClick={onClose} className="btn-red h-10">
-              Cancel
-            </button>
-          </div>
-          <p className="text-[11px] text-muted-foreground text-center mt-3">
-            Votes credit only after verified payment. No refunds on cast votes.
-          </p>
         </div>
       </div>
     </div>

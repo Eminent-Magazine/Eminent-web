@@ -83,6 +83,7 @@ export type RegistrationSettings = {
   requirePaymentBeforeRegistration: boolean;
   registrationFee: number;
   registrationEnabled: boolean;
+  votingEnabled: boolean;
 };
 
 type Category = "Miss" | "Mister" | "Teen";
