@@ -252,11 +252,12 @@ function VotePage() {
                         Vote
                       </button>
                       <button
-                        onClick={() =>
+                        onClick={() => {
+                          const url = `${window.location.origin}/vote/${c._id}`;
                           navigator
-                            ?.share?.({ title: `Vote for ${c.name}`, url: window.location.href })
-                            .catch(() => {})
-                        }
+                            ?.share?.({ title: `Vote for ${c.name} · Face of Eminent`, url })
+                            .catch(() => navigator?.clipboard?.writeText(url));
+                        }}
                         className="w-10 h-10 grid place-items-center border border-input hover:border-primary hover:text-primary transition-colors"
                         aria-label="Share"
                       >
@@ -529,14 +530,14 @@ export function VoteDialog({
               {mode === "custom" && (
                 <div>
                   <p className="eyebrow mb-3">Enter vote count</p>
-                  <div className="border border-border p-4 flex items-center gap-3">
+                  <div className="flex items-center w-full h-11 px-3 bg-card border border-input text-sm rounded-sm">
                     <input
                       type="number"
                       min={1}
                       placeholder="e.g. 50"
                       value={customVotes}
                       onChange={(e) => setCustomVotes(e.target.value.replace(/\D/g, ""))}
-                      className="flex-1 bg-transparent text-3xl font-display outline-none tabular-nums"
+                      className="flex-1 bg-transparent font-display outline-none tabular-nums"
                     />
                     <span className="text-sm text-muted-foreground shrink-0">votes</span>
                   </div>
@@ -601,7 +602,7 @@ export function VoteDialog({
                     />
                   )}
                 </button>
-                <button type="button" onClick={onClose} className="btn-red h-10">
+                <button type="button" onClick={onClose} className="btn-red !rounded-none h-10">
                   Cancel
                 </button>
               </div>

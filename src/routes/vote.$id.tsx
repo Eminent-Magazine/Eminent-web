@@ -17,14 +17,43 @@ import { Public, ResultCandidate } from "@/lib/pageantApi";
 import { VoteDialog } from "./vote.index";
 
 export const Route = createFileRoute("/vote/$id")({
-  head: () => ({
-    meta: [
-      { title: "Contestant · Face of Eminent Magazine" },
-      { name: "description", content: "Meet the contestant and cast your vote." },
-      { property: "og:title", content: "Contestant · Face of Eminent Magazine" },
-      { property: "og:description", content: "Meet the contestant and cast your vote." },
-    ],
-  }),
+  loader: async ({ params }) => {
+    const res = await Public.candidate(params.id).catch(() => null);
+    return { candidate: res?.candidate ?? null };
+  },
+  head: ({ params, loaderData }) => {
+    const c = loaderData?.candidate;
+    const name = c?.name ?? "Contestant";
+    const title = `Vote for ${name} · Face of Eminent Magazine`;
+    const description = c?.bio
+      ? c.bio.slice(0, 155).replace(/\s+/g, " ").trim() + "…"
+      : `Cast your vote for ${name} in the Face of Eminent Magazine pageant.`;
+    const image = c?.photo ?? undefined;
+    const url =
+      typeof window !== "undefined"
+        ? `${window.location.origin}/vote/${params.id}`
+        : `/vote/${params.id}`;
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        { property: "og:type", content: "profile" },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+        { property: "og:url", content: url },
+        { name: "twitter:card", content: image ? "summary_large_image" : "summary" },
+        { name: "twitter:title", content: title },
+        { name: "twitter:description", content: description },
+        ...(image
+          ? [
+              { property: "og:image", content: image },
+              { name: "twitter:image", content: image },
+            ]
+          : []),
+      ],
+      links: [{ rel: "canonical", href: `/vote/${params.id}` }],
+    };
+  },
   component: ContestantPage,
 });
 
