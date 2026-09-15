@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Search, Share2, Crown, Loader2, X } from "lucide-react";
 import { SiteLayout } from "@/components/site/SiteLayout";
@@ -63,7 +63,6 @@ function VotePage() {
   const start = (page - 1) * pageSize;
   const end = Math.min(start + pageSize, total);
 
-
   // Client-side name search on the current page only
   const pageItems = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -78,12 +77,12 @@ function VotePage() {
   //   setPage(1);
   // }, [query, category]);
 
-  // Derive category list from the current page (stable once data loads)
-  const categories = useMemo(() => {
-    const s = new Set<string>();
-    allCandidates.forEach((c) => c.category && s.add(c.category));
-    return Array.from(s);
-  }, [allCandidates]);
+  // Accumulate every category name ever seen across any API response.
+  // Using a ref so it survives re-renders without causing them, and never
+  // resets when the active category filter changes.
+  const seenCategories = useRef<Set<string>>(new Set());
+  allCandidates.forEach((c) => c.category && seenCategories.current.add(c.category));
+  const categories = Array.from(seenCategories.current).sort();
 
   const stats = statsQ.data?.statistics;
   const leaderboard = (resultsQ.data?.results?.[0]?.candidates ?? []).slice(0, 5);
@@ -256,7 +255,7 @@ function VotePage() {
                         onClick={() =>
                           navigator
                             ?.share?.({ title: `Vote for ${c.name}`, url: window.location.href })
-                            .catch(() => { })
+                            .catch(() => {})
                         }
                         className="w-10 h-10 grid place-items-center border border-input hover:border-primary hover:text-primary transition-colors"
                         aria-label="Share"
@@ -340,22 +339,43 @@ export function VoteDialog({
   const packagesQ = useQuery({
     queryKey: ["packages"],
     queryFn: Public.packages,
-    enabled: votingEnabled, // no point fetching bundles if voting's closed
+    enabled: votingEnabled,
   });
   const packages = packagesQ.data?.packages ?? [];
 
+  // Sort smallest-first so index 0 gives the base per-vote price
+  const sorted = [...packages].sort((a, b) => a.numberOfVotes - b.numberOfVotes);
+  const pricePerVote = sorted.length > 0 ? sorted[0].price / sorted[0].numberOfVotes : 0;
+
+  type Mode = "packages" | "custom";
+  const [mode, setMode] = useState<Mode>("packages");
   const [bundle, setBundle] = useState<VotePackage | null>(null);
+  const [customVotes, setCustomVotes] = useState<string>("");
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [paying, setPaying] = useState<"paystack" | "flutterwave" | null>(null);
   const [err, setErr] = useState<string | null>(null);
 
-  const active = bundle ?? packages[Math.min(1, packages.length - 1)] ?? null;
+  // Resolve whichever mode is active into a unified {numberOfVotes, price} shape
+  const active: { numberOfVotes: number; price: number; currency: string } | null =
+    mode === "packages"
+      ? (bundle ?? packages[Math.min(1, packages.length - 1)] ?? null)
+      : (() => {
+          const n = parseInt(customVotes, 10);
+          if (!n || n < 1) return null;
+          const currency = sorted[0]?.currency ?? "NGN";
+          return { numberOfVotes: n, price: Math.round(n * pricePerVote), currency };
+        })();
 
   async function pay(method: "paystack" | "flutterwave") {
     if (!active || !name || !email || !phone) {
       setErr("Please fill in your name, email and phone.");
+      return;
+    }
+    if (mode === "custom" && active.numberOfVotes < 1) {
+      setErr("Please enter at least 1 vote.");
       return;
     }
     setErr(null);
@@ -387,6 +407,7 @@ export function VoteDialog({
         className="bg-background max-w-lg w-full border border-border shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
+        {/* Header */}
         <div className="p-6 border-b border-border flex justify-between">
           <div className="flex items-center gap-4">
             {contestant.photo && (
@@ -426,45 +447,108 @@ export function VoteDialog({
               <p className="text-sm text-muted-foreground">
                 Please check back later — voting isn't open at this time.
               </p>
-              <button
-                type="button"
-                onClick={onClose}
-                className="btn-red h-10 px-6 mt-6"
-              >
+              <button type="button" onClick={onClose} className="btn-red h-10 px-6 mt-6">
                 Close
               </button>
             </div>
           ) : (
             <>
-              <p className="eyebrow mb-3">Choose your bundle</p>
-              {packagesQ.isLoading ? (
-                <div className="grid grid-cols-2 gap-2">
-                  {Array.from({ length: 4 }).map((_, i) => (
-                    <div key={i} className="border border-border p-4">
-                      <Skeleton height="2rem" width="60%" className="mb-2" />
-                      <Skeleton height="1rem" width="45%" />
+              {/* Mode tabs */}
+              <div className="flex border border-border mb-5">
+                <button
+                  type="button"
+                  onClick={() => setMode("packages")}
+                  className={`flex-1 h-10 text-[11px] uppercase tracking-[0.2em] transition-colors cursor-pointer ${
+                    mode === "packages"
+                      ? "bg-primary text-primary-foreground"
+                      : "hover:bg-secondary/60 text-muted-foreground"
+                  }`}
+                >
+                  Packages
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMode("custom")}
+                  className={`flex-1 h-10 text-[11px] uppercase tracking-[0.2em] transition-colors cursor-pointer border-l border-border ${
+                    mode === "custom"
+                      ? "bg-primary text-primary-foreground"
+                      : "hover:bg-secondary/60 text-muted-foreground"
+                  }`}
+                >
+                  Custom
+                </button>
+              </div>
+
+              {/* Packages */}
+              {mode === "packages" && (
+                <>
+                  <p className="eyebrow mb-3">Choose your bundle</p>
+                  {packagesQ.isLoading ? (
+                    <div className="grid grid-cols-2 gap-2">
+                      {Array.from({ length: 4 }).map((_, i) => (
+                        <div key={i} className="border border-border p-4">
+                          <Skeleton height="2rem" width="60%" className="mb-2" />
+                          <Skeleton height="1rem" width="45%" />
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="grid grid-cols-2 gap-2">
-                  {packages.map((b) => (
-                    <button
-                      key={b.numberOfVotes}
-                      onClick={() => setBundle(b)}
-                      className={`text-left border p-4 transition-colors ${active?.numberOfVotes === b.numberOfVotes ? "border-primary bg-primary/5" : "border-border hover:border-primary/50"}`}
-                    >
-                      <p className="font-display text-2xl">
-                        {b.numberOfVotes} <span className="text-sm text-muted-foreground">votes</span>
-                      </p>
-                      <p className="text-sm mt-1">
-                        {b.currency === "NGN" ? "₦" : b.currency + " "}
-                        {b.price.toLocaleString()}
-                      </p>
-                    </button>
-                  ))}
+                  ) : (
+                    <div className="grid grid-cols-2 gap-2">
+                      {sorted.map((b) => {
+                        const isActive =
+                          (bundle ?? packages[Math.min(1, packages.length - 1)])?.numberOfVotes ===
+                          b.numberOfVotes;
+                        return (
+                          <button
+                            key={b.numberOfVotes}
+                            type="button"
+                            onClick={() => setBundle(b)}
+                            className={`text-left border p-4 transition-colors ${
+                              isActive
+                                ? "border-primary bg-primary/5"
+                                : "border-border hover:border-primary/50"
+                            }`}
+                          >
+                            <p className="font-display text-2xl">
+                              {b.numberOfVotes}{" "}
+                              <span className="text-sm text-muted-foreground">votes</span>
+                            </p>
+                            <p className="text-sm mt-1">
+                              {b.currency === "NGN" ? "₦" : b.currency + " "}
+                              {b.price.toLocaleString()}
+                            </p>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </>
+              )}
+
+              {/* Custom */}
+              {mode === "custom" && (
+                <div>
+                  <p className="eyebrow mb-3">Enter vote count</p>
+                  <div className="border border-border p-4 flex items-center gap-3">
+                    <input
+                      type="number"
+                      min={1}
+                      placeholder="e.g. 50"
+                      value={customVotes}
+                      onChange={(e) => setCustomVotes(e.target.value.replace(/\D/g, ""))}
+                      className="flex-1 bg-transparent text-3xl font-display outline-none tabular-nums"
+                    />
+                    <span className="text-sm text-muted-foreground shrink-0">votes</span>
+                  </div>
+                  {pricePerVote > 0 && (
+                    <p className="text-xs text-muted-foreground mt-2">
+                      ₦{pricePerVote.toLocaleString()} per vote
+                    </p>
+                  )}
                 </div>
               )}
+
+              {/* Personal details */}
               <div className="mt-5 space-y-3">
                 <input
                   value={name}
@@ -486,13 +570,20 @@ export function VoteDialog({
                   className="w-full h-11 px-3 bg-card border border-input text-sm rounded-sm"
                 />
               </div>
+
               {err && <p className="text-xs text-destructive mt-3">{err}</p>}
+
+              {/* Total */}
               {active && (
                 <div className="mt-5 flex items-center justify-between text-sm border-t border-border pt-4">
-                  <span className="text-muted-foreground">Total</span>
+                  <span className="text-muted-foreground">
+                    {active.numberOfVotes.toLocaleString()} votes · Total
+                  </span>
                   <span className="font-display text-2xl">₦{active.price.toLocaleString()}</span>
                 </div>
               )}
+
+              {/* Payment buttons */}
               <div className="grid grid-cols-2 gap-2 mt-5">
                 <button
                   disabled={paying !== null}
@@ -503,8 +594,8 @@ export function VoteDialog({
                     <Loader2 className="w-4 h-4 animate-spin mx-auto" />
                   ) : (
                     <img
-                      src={"/Flutterwave-Logo.png"}
-                      alt="pay with Flutterwave"
+                      src="/Flutterwave-Logo.png"
+                      alt="Pay with Flutterwave"
                       className="h-20 object-center rounded-full"
                       loading="lazy"
                     />
