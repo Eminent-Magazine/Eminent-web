@@ -349,7 +349,7 @@ export function VoteDialog({
   const pricePerVote = sorted.length > 0 ? sorted[0].price / sorted[0].numberOfVotes : 0;
 
   type Mode = "packages" | "custom";
-  const [mode, setMode] = useState<Mode>("packages");
+  const [mode, setMode] = useState<Mode>("custom");
   const [bundle, setBundle] = useState<VotePackage | null>(null);
   const [customVotes, setCustomVotes] = useState<string>("");
 
@@ -455,7 +455,7 @@ export function VoteDialog({
           ) : (
             <>
               {/* Mode tabs */}
-              <div className="flex border border-border mb-5">
+              {/* <div className="flex border border-border mb-5">
                 <button
                   type="button"
                   onClick={() => setMode("packages")}
@@ -478,10 +478,10 @@ export function VoteDialog({
                 >
                   Custom
                 </button>
-              </div>
+              </div> */}
 
               {/* Packages */}
-              {mode === "packages" && (
+              {/* {mode === "packages" && (
                 <>
                   <p className="eyebrow mb-3">Choose your bundle</p>
                   {packagesQ.isLoading ? (
@@ -524,16 +524,16 @@ export function VoteDialog({
                     </div>
                   )}
                 </>
-              )}
+              )} */}
 
               {/* Custom */}
-              {mode === "custom" && (
+              {/* {mode === "custom" && ( */}
                 <div>
                   <p className="eyebrow mb-3">Enter vote count</p>
                   <div className="flex items-center w-full h-11 px-3 bg-card border border-input text-sm rounded-sm">
                     <input
                       type="number"
-                      min={1}
+                      min={5}
                       placeholder="e.g. 50"
                       value={customVotes}
                       onChange={(e) => setCustomVotes(e.target.value.replace(/\D/g, ""))}
@@ -547,7 +547,7 @@ export function VoteDialog({
                     </p>
                   )}
                 </div>
-              )}
+              {/* )} */}
 
               {/* Personal details */}
               <div className="mt-5 space-y-3">
@@ -594,12 +594,13 @@ export function VoteDialog({
                   {paying === "flutterwave" ? (
                     <Loader2 className="w-4 h-4 animate-spin mx-auto" />
                   ) : (
-                    <img
-                      src="/Flutterwave-Logo.png"
-                      alt="Pay with Flutterwave"
-                      className="h-20 object-center rounded-full"
-                      loading="lazy"
-                    />
+                    // <img
+                    //   src="/Flutterwave-Logo.png"
+                    //   alt="Pay with Flutterwave"
+                    //   className="h-20 object-center rounded-full"
+                    //   loading="lazy"
+                    // />
+                    "Pay with Flutter"
                   )}
                 </button>
                 <button type="button" onClick={onClose} className="btn-red !rounded-none h-10">
