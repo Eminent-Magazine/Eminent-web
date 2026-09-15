@@ -13,13 +13,31 @@ import {
 } from "lucide-react";
 
 import { SiteLayout } from "@/components/site/SiteLayout";
-import { Public, ResultCandidate } from "@/lib/pageantApi";
+import { Public, ResultCandidate, type Candidate } from "@/lib/pageantApi";
 import { VoteDialog } from "./vote.index";
+
+// Fetch a candidate directly from the upstream API — safe to call server-side
+// because there is no CORS restriction on a server-to-server request.
+const UPSTREAM = import.meta.env.VITE_API_URL || "";
+async function fetchCandidateSSR(id: string): Promise<Candidate | null> {
+  if (!UPSTREAM) return null;
+  try {
+    const res = await fetch(`${UPSTREAM}/api/candidates/${encodeURIComponent(id)}`, {
+      headers: { Accept: "application/json" },
+    });
+    if (!res.ok) return null;
+    const json = await res.json();
+    // Upstream returns { success, candidate: {...} } — no data wrapper
+    return (json?.candidate ?? null) as Candidate | null;
+  } catch {
+    return null;
+  }
+}
 
 export const Route = createFileRoute("/vote/$id")({
   loader: async ({ params }) => {
-    const res = await Public.candidate(params.id).catch(() => null);
-    return { candidate: res?.candidate ?? null };
+    const candidate = await fetchCandidateSSR(params.id);
+    return { candidate };
   },
   head: ({ params, loaderData }) => {
     const c = loaderData?.candidate;
@@ -29,10 +47,6 @@ export const Route = createFileRoute("/vote/$id")({
       ? c.bio.slice(0, 155).replace(/\s+/g, " ").trim() + "…"
       : `Cast your vote for ${name} in the Face of Eminent Magazine pageant.`;
     const image = c?.photo ?? undefined;
-    const url =
-      typeof window !== "undefined"
-        ? `${window.location.origin}/vote/${params.id}`
-        : `/vote/${params.id}`;
     return {
       meta: [
         { title },
@@ -40,7 +54,6 @@ export const Route = createFileRoute("/vote/$id")({
         { property: "og:type", content: "profile" },
         { property: "og:title", content: title },
         { property: "og:description", content: description },
-        { property: "og:url", content: url },
         { name: "twitter:card", content: image ? "summary_large_image" : "summary" },
         { name: "twitter:title", content: title },
         { name: "twitter:description", content: description },
