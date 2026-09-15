@@ -528,25 +528,25 @@ export function VoteDialog({
 
               {/* Custom */}
               {/* {mode === "custom" && ( */}
-                <div>
-                  <p className="eyebrow mb-3">Enter vote count</p>
-                  <div className="flex items-center w-full h-11 px-3 bg-card border border-input text-sm rounded-sm">
-                    <input
-                      type="number"
-                      min={5}
-                      placeholder="e.g. 50"
-                      value={customVotes}
-                      onChange={(e) => setCustomVotes(e.target.value.replace(/\D/g, ""))}
-                      className="flex-1 bg-transparent font-display outline-none tabular-nums"
-                    />
-                    <span className="text-sm text-muted-foreground shrink-0">votes</span>
-                  </div>
-                  {pricePerVote > 0 && (
-                    <p className="text-xs text-muted-foreground mt-2">
-                      ₦{pricePerVote.toLocaleString()} per vote
-                    </p>
-                  )}
+              <div>
+                <p className="eyebrow mb-3">Enter vote count</p>
+                <div className="flex items-center w-full h-11 px-3 bg-card border border-input text-sm rounded-sm">
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    placeholder="e.g. 50"
+                    value={customVotes}
+                    onChange={(e) => setCustomVotes(e.target.value.replace(/\D/g, ""))}
+                    className="flex-1 bg-transparent font-display outline-none tabular-nums"
+                  />
+                  <span className="text-sm text-muted-foreground shrink-0">votes</span>
                 </div>
+                {pricePerVote > 0 && (
+                  <p className="text-xs text-muted-foreground mt-2">
+                    ₦{pricePerVote.toLocaleString()} per vote
+                  </p>
+                )}
+              </div>
               {/* )} */}
 
               {/* Personal details */}
