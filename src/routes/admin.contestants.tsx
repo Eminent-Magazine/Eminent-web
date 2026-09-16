@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Loader2, Plus, Pencil, Trash2, TrendingUp, X } from "lucide-react";
+import { Loader2, Plus, Pencil, Trash2, TrendingUp, X, RotateCcw } from "lucide-react";
 import { Admin, type Candidate } from "@/lib/pageantApi";
 import { Pagination } from "@/components/site/Pagination";
 import { TableBodySkeleton, type SkeletonColDef } from "@/components/site/Skeleton";
@@ -33,10 +33,29 @@ function ContestantsPage() {
   });
   const del = useMutation({
     mutationFn: (id: string) => Admin.deleteCandidate(id),
-    onSuccess: () => { 
-      toast.success("Candidate Deleted"); 
-      qc.invalidateQueries({ queryKey: ["candidates-admin"] }) },
+    onSuccess: () => {
+      toast.success("Candidate Deleted");
+      qc.invalidateQueries({ queryKey: ["candidates-admin"] });
+    },
     onError: (e) => toast.error(e instanceof Error ? e.message : "Failed to delete"),
+  });
+
+  const resetOne = useMutation({
+    mutationFn: (id: string) => Admin.resetCandidateVotes(id),
+    onSuccess: () => {
+      toast.success("Votes reset");
+      qc.invalidateQueries({ queryKey: ["candidates-admin"] });
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Failed to reset votes"),
+  });
+
+  const resetAll = useMutation({
+    mutationFn: () => Admin.resetAllVotes(),
+    onSuccess: () => {
+      toast.success("All votes reset");
+      qc.invalidateQueries({ queryKey: ["candidates-admin"] });
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Failed to reset all votes"),
   });
 
   const candidates = q.data?.candidates ?? [];
@@ -55,12 +74,29 @@ function ContestantsPage() {
           <p className="eyebrow">Contestants</p>
           <h1 className="font-display text-3xl sm:text-4xl mt-2">Active contestants</h1>
         </div>
-        <button
-          onClick={() => setEditing("new")}
-          className="btn-primary inline-flex items-center justify-center gap-2 self-start sm:self-auto"
-        >
-          <Plus className="w-4 h-4" /> New contestant
-        </button>
+        <div className="flex gap-2 self-start sm:self-auto">
+          <button
+            onClick={() => {
+              if (confirm("Reset ALL votes for every contestant? This cannot be undone."))
+                resetAll.mutate();
+            }}
+            disabled={resetAll.isPending}
+            className="h-10 px-4 inline-flex items-center gap-2 border border-destructive/50 text-destructive text-xs uppercase tracking-widest hover:bg-destructive/10 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+          >
+            {resetAll.isPending ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <RotateCcw className="w-4 h-4" />
+            )}
+            Reset all votes
+          </button>
+          <button
+            onClick={() => setEditing("new")}
+            className="btn-primary inline-flex items-center justify-center gap-2"
+          >
+            <Plus className="w-4 h-4" /> New contestant
+          </button>
+        </div>
       </div>
 
       <div className="border border-border overflow-x-auto">
@@ -106,6 +142,21 @@ function ContestantsPage() {
                       className="w-8 h-8 grid cursor-pointer place-items-center border border-input hover:border-gold hover:text-gold"
                     >
                       <TrendingUp className="w-4 h-4" />
+                    </button>
+                    <button
+                      type="button"
+                      title="Reset votes"
+                      disabled={resetOne.isPending && resetOne.variables === c._id}
+                      onClick={() => {
+                        if (confirm(`Reset all votes for ${c.name}?`)) resetOne.mutate(c._id);
+                      }}
+                      className="w-8 h-8 grid cursor-pointer place-items-center border border-input hover:border-destructive hover:text-destructive disabled:opacity-40 disabled:cursor-not-allowed"
+                    >
+                      {resetOne.isPending && resetOne.variables === c._id ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <RotateCcw className="w-4 h-4" />
+                      )}
                     </button>
                     <button
                       type="button"

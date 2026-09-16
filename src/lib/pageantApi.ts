@@ -367,6 +367,12 @@ export const Admin = {
   },
   addVotes: (candidateId: string, votes: number, reason: string) =>
     api<{ candidate: Candidate }>("/admin/votes/add", { body: { candidateId, votes, reason } }),
+  resetAllVotes: () =>
+    api<{ success: boolean; message: string }>("/votes/reset", { method: "DELETE" }),
+  resetCandidateVotes: (candidateId: string) =>
+    api<{ success: boolean; message: string }>(`/votes/reset/${encodeURIComponent(candidateId)}`, {
+      method: "DELETE",
+    }),
   transactions: (q: { page?: number; limit?: number } = {}) =>
     api<PaginatedResponse<VoteTransaction[], "transactions">>("/payments/transactions", {
       query: q as any,
