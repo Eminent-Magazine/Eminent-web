@@ -550,7 +550,7 @@ export function VoteDialog({
                   <input
                     type="text"
                     inputMode="numeric"
-                    placeholder="minimum is 5 votes e.g. 50"
+                    placeholder="Enter vote e.g. 50"
                     value={customVotes}
                     onChange={(e) => setCustomVotes(e.target.value.replace(/\D/g, ""))}
                     className="flex-1 bg-transparent font-display outline-none tabular-nums"
