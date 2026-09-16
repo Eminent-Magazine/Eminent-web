@@ -101,7 +101,7 @@ function ContestantsPage() {
                   <div className="inline-flex gap-1">
                     <button
                       type="button"
-                      title="Adjust votes"
+                      title="Manually Add votes"
                       onClick={() => setVoteFor(c)}
                       className="w-8 h-8 grid cursor-pointer place-items-center border border-input hover:border-gold hover:text-gold"
                     >
