@@ -159,7 +159,7 @@ function Dashboard() {
               >
                 <span>{c._id ?? c.category}</span>
                 <span className="text-muted-foreground">
-                  {c.count ?? c.total} · {(c.votes ?? 0).toLocaleString()} votes
+                  {c.totalTransactions} transactions . {(c.count ?? c.totalVotes).toLocaleString()} votes · {(c.candidates ?? 0)} candidates
                 </span>
               </div>
             ))}

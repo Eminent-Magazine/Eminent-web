@@ -39,9 +39,34 @@ function NotFoundComponent() {
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
   const router = useRouter();
+
   useEffect(() => {
     reportLovableError(error, { boundary: "tanstack_root_error_component" });
   }, [error]);
+
+  // A stale chunk 404 after a new deploy — auto-reload once to pick up fresh assets.
+  const isChunkError =
+    error?.message?.includes("Failed to fetch dynamically imported module") ||
+    error?.message?.includes("Loading chunk") ||
+    error?.message?.includes("Importing a module script failed");
+
+  useEffect(() => {
+    if (!isChunkError) return;
+    const reloaded = sessionStorage.getItem("chunk_reload");
+    if (reloaded) return; // already tried once, don't loop
+    sessionStorage.setItem("chunk_reload", "1");
+    window.location.reload();
+  }, [isChunkError]);
+
+  if (isChunkError) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background px-4">
+        <div className="max-w-md text-center">
+          <p className="text-sm text-muted-foreground">Updating to the latest version…</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
@@ -55,6 +80,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <button
             onClick={() => {
+              sessionStorage.removeItem("chunk_reload");
               router.invalidate();
               reset();
             }}
