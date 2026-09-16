@@ -89,8 +89,13 @@ function ContestantPage() {
   const rank = c
     ? results?.[0]?.candidates.find((r: ResultCandidate) => r.candidateId === c._id)
     : 0;
-  const totalVotes = results.reduce((sum: number, r: any) => sum + (r.votes ?? 0), 0);
-  const share = c ? Number(((c.votes ?? 0) / Math.max(totalVotes, 1)) * 100).toFixed(1) : "0";
+  // Sum totalVotes across all CategoryResult entries (each has a totalVotes field, not votes)
+  const totalVotes = results.reduce((sum: number, r: any) => sum + (r.totalVotes ?? 0), 0);
+  const share = c
+    ? totalVotes > 0
+      ? Number(((c.votes ?? 0) / totalVotes) * 100).toFixed(1)
+      : "0.0"
+    : "0.0";
 
   return (
     <SiteLayout>
