@@ -71,10 +71,10 @@ export type Candidate = {
   bio?: string;
   category?: string;
   votes?: number;
-  userId: string;
-  createdAt: string;
-  __v: number;
-  isActive: boolean;
+  userId?: string | { _id: string; name: string; email?: string; phone?: string };
+  createdAt?: string;
+  __v?: number;
+  isActive?: boolean;
 };
 
 export type VotePackage = { name: string; numberOfVotes: number; price: number; currency: string };
