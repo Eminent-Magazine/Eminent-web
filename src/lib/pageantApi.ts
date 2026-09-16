@@ -235,7 +235,16 @@ export const Public = {
     ),
   candidate: (id: string) => api<{ candidate: Candidate }>(`/candidates/${id}`),
   results: () => api<ResultsResponse>("/votes/results"),
-  statistics: () => api<{ statistics: any }>("/votes/statistics"),
+  statistics: () =>
+    api<{
+      statistics: {
+        totalVotes: number;
+        totalTransactions: number;
+        totalVoters: number;
+        totalCandidates: number;
+        categoryStats: { _id: string; totalVotes: number; candidates: number }[];
+      };
+    }>("/votes/statistics"),
   packages: () => api<{ packages: VotePackage[] }>("/payments/packages"),
   initVote: (body: {
     fullName: string;

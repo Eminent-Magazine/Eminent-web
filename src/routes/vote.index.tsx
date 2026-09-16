@@ -85,6 +85,16 @@ function VotePage() {
   const categories = Array.from(seenCategories.current).sort();
 
   const stats = statsQ.data?.statistics;
+
+  // When a category is selected, pull its stats from categoryStats.
+  // Fall back to the global totals when on "all".
+  const categoryStat =
+    category !== "all" ? stats?.categoryStats?.find((s) => s._id === category) : null;
+
+  const displayVotes = categoryStat ? categoryStat.totalVotes : (stats?.totalVotes ?? 0);
+  const displayCandidates = categoryStat ? categoryStat.candidates : (stats?.totalCandidates ?? 0);
+  const displayVoters = stats?.totalVoters ?? 0;
+  const displayTransactions = stats?.totalTransactions ?? 0;
   const leaderboard = (resultsQ.data?.results?.[0]?.candidates ?? []).slice(0, 5);
 
   return (
@@ -104,10 +114,16 @@ function VotePage() {
           </p>
           {stats && (
             <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-3 max-w-3xl mx-auto text-left">
-              <StatCard label="Total votes" value={stats.totalVotes} />
-              <StatCard label="Contestants" value={stats.totalCandidates} />
-              <StatCard label="Voters" value={stats.totalVoters} />
-              <StatCard label="Transactions" value={stats.totalTransactions} />
+              <StatCard
+                label={category !== "all" ? `Votes · ${category}` : "Total votes"}
+                value={displayVotes}
+              />
+              <StatCard
+                label={category !== "all" ? `Contestants · ${category}` : "Contestants"}
+                value={displayCandidates}
+              />
+              <StatCard label="Voters" value={displayVoters} />
+              <StatCard label="Transactions" value={displayTransactions} />
             </div>
           )}
         </div>
@@ -144,7 +160,7 @@ function VotePage() {
                 )}
                 <div className="flex-1 min-w-0">
                   <p className="font-medium truncate">{c.name}</p>
-                  <p className="text-xs text-muted-foreground">{c.category ?? "—"}</p>
+                  <p className="text-xs text-muted-foreground">{c.category ?? "Face of Eminent"}</p>
                 </div>
                 <div className="text-right">
                   <p className="font-display text-xl">{(c.votes ?? 0).toLocaleString()}</p>
