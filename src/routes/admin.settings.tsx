@@ -51,6 +51,7 @@ function SettingsPage() {
             <Toggle label="Voting open" value={!!s.votingEnabled} onChange={(v) => setField("votingEnabled", v)} />
             <NumberField label="Registration fee (₦)" value={s.registrationFee ?? 0} onSave={(v) => setField("registrationFee", v)} />
             <NumberField label="Price per vote (₦)" value={s.pricePerVote ?? 0} onSave={(v) => setField("pricePerVote", v)} />
+            <NumberField label="Minimum vote unit" value={s.minimumVoteUnit ?? 0} onSave={(v) => setField("minimumVoteUnit", v)} />
           </div>
 
           <div className="flex flex-col">
